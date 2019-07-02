@@ -10,7 +10,15 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.math.BigInteger;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Date;
@@ -33,17 +41,6 @@ import SecurityAlgorithm.MD5;
 import SecurityAlgorithm.PlayFairAlgorithm;
 import SecurityAlgorithm.RSA;
 import SecurityAlgorithm.TDES;
-
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.math.BigInteger;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.text.SimpleDateFormat;
-
 import Client.Message;
 import SecurityAlgorithm.DigitalSignature;
 
@@ -63,7 +60,11 @@ public class ChatApplication {
 	Socket tcpSocket;// use to connect with server
 	String path = "C:/Users/12284/Desktop/system/";
 
-
+	ClientLogUI clientLogwindow;
+	ClientHomeUI clientHomeUI;
+	InfoPromptUI infoPromptwindow;
+	Map<String, ChatRoomUI> chatRoomUIMap;
+	PrivacyInfoUI privacyInfoUI;
 
 	private Envelope envelope = null;
 	private String AsMode = "RSA";
@@ -79,11 +80,6 @@ public class ChatApplication {
 	int index = 0;
 	String username = null;
 	private Certificate certificate = null;
-	ClientLogUI clientLogwindow;
-	ClientHomeUI clientHomeUI;
-	InfoPromptUI infoPromptwindow;
-	Map<String, ChatRoomUI> chatRoomUIMap;
-	PrivacyInfoUI privacyInfoUI;
 	private SystemMsgForCertificate systemMsgForCertificate = null;
 	private Map<String, BigInteger> negotiateDH = new HashMap<>();
 	private String wavPath = "C:/Users/12284/Desktop/msn_wav/";
@@ -193,7 +189,12 @@ public class ChatApplication {
 								System.err.println("send file");
 								List<FileSend> fileSends = (List<FileSend>) objects.get(0);
 								for (FileSend fileSend : fileSends) {
-									
+									fileSend.setFrom(username);
+									String md5 = new MD5(new String(fileSend.getFile())).processMD5();
+									fileSend.setMD5(md5);
+									DigitalSignature digitalSignature = new DigitalSignature();
+									digitalSignature.setD(rsa.getD());
+									digitalSignature.setN(rsa.getN());
 									fileSend.setSignature(digitalSignature.getSignature(md5));
 									fileSend.setTime(new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
 									try {
@@ -212,12 +213,6 @@ public class ChatApplication {
 								message.setSender(username);
 								message.setReceiver((String) objects.get(0));
 								String receiver = (String) objects.get(0);
-								fileSend.setFrom(username);
-								String md5 = new MD5(new String(fileSend.getFile())).processMD5();
-								fileSend.setMD5(md5);
-								DigitalSignature digitalSignature = new DigitalSignature();
-								digitalSignature.setD(rsa.getD());
-								digitalSignature.setN(rsa.getN());
 								String msg = (String) objects.get(1);
 								if (receiver.contains("group")) {
 									// 判断是否为群聊
