@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="resources/beautyeye_lnf.jar"/>
+	<classpathentry kind="lib" path="src/beautyeye_lnf.jar"/>
+	<classpathentry kind="lib" path="src/mariadb-java-client-2.2.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
