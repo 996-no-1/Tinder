@@ -1,4 +1,4 @@
-package ClientGUI;
+ï»¿package ClientGUI;
 
 import java.awt.EventQueue;
 import java.io.BufferedOutputStream;
@@ -10,15 +10,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.math.BigInteger;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Date;
@@ -41,6 +33,17 @@ import SecurityAlgorithm.MD5;
 import SecurityAlgorithm.PlayFairAlgorithm;
 import SecurityAlgorithm.RSA;
 import SecurityAlgorithm.TDES;
+
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.math.BigInteger;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.text.SimpleDateFormat;
+
 import Client.Message;
 import SecurityAlgorithm.DigitalSignature;
 
@@ -60,11 +63,7 @@ public class ChatApplication {
 	Socket tcpSocket;// use to connect with server
 	String path = "C:/Users/12284/Desktop/system/";
 
-	ClientLogUI clientLogwindow;
-	ClientHomeUI clientHomeUI;
-	InfoPromptUI infoPromptwindow;
-	Map<String, ChatRoomUI> chatRoomUIMap;
-	PrivacyInfoUI privacyInfoUI;
+
 
 	private Envelope envelope = null;
 	private String AsMode = "RSA";
@@ -76,10 +75,15 @@ public class ChatApplication {
 	private static ObjectOutputStream oos = null;
 	private RSA rsa = null;
 	private MD5 md5 = null;
-	// ¼ÇÂ¼ÓÃ»§Ê±ºò±»·â½û
+	// è®°å½•ç”¨æˆ·æ—¶å€™è¢«å°ç¦
 	int index = 0;
 	String username = null;
 	private Certificate certificate = null;
+	ClientLogUI clientLogwindow;
+	ClientHomeUI clientHomeUI;
+	InfoPromptUI infoPromptwindow;
+	Map<String, ChatRoomUI> chatRoomUIMap;
+	PrivacyInfoUI privacyInfoUI;
 	private SystemMsgForCertificate systemMsgForCertificate = null;
 	private Map<String, BigInteger> negotiateDH = new HashMap<>();
 	private String wavPath = "C:/Users/12284/Desktop/msn_wav/";
@@ -189,12 +193,7 @@ public class ChatApplication {
 								System.err.println("send file");
 								List<FileSend> fileSends = (List<FileSend>) objects.get(0);
 								for (FileSend fileSend : fileSends) {
-									fileSend.setFrom(username);
-									String md5 = new MD5(new String(fileSend.getFile())).processMD5();
-									fileSend.setMD5(md5);
-									DigitalSignature digitalSignature = new DigitalSignature();
-									digitalSignature.setD(rsa.getD());
-									digitalSignature.setN(rsa.getN());
+									
 									fileSend.setSignature(digitalSignature.getSignature(md5));
 									fileSend.setTime(new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
 									try {
@@ -213,9 +212,15 @@ public class ChatApplication {
 								message.setSender(username);
 								message.setReceiver((String) objects.get(0));
 								String receiver = (String) objects.get(0);
+								fileSend.setFrom(username);
+								String md5 = new MD5(new String(fileSend.getFile())).processMD5();
+								fileSend.setMD5(md5);
+								DigitalSignature digitalSignature = new DigitalSignature();
+								digitalSignature.setD(rsa.getD());
+								digitalSignature.setN(rsa.getN());
 								String msg = (String) objects.get(1);
 								if (receiver.contains("group")) {
-									// ÅĞ¶ÏÊÇ·ñÎªÈºÁÄ
+									// åˆ¤æ–­æ˜¯å¦ä¸ºç¾¤èŠ
 									message.setMsg(msg);
 									try {
 										oos.writeObject(message);
@@ -225,7 +230,7 @@ public class ChatApplication {
 									} catch (Exception e1) {
 										envelope = null;
 									}
-									// Ğ´Èë±¾µØÁÄÌìÎÄ¼ş
+									// å†™å…¥æœ¬åœ°èŠå¤©æ–‡ä»¶
 									File file = new File(path + "/" + message.getReceiver() + ".txt");
 									PrintWriter pw;
 									try {
@@ -262,7 +267,7 @@ public class ChatApplication {
 								} catch (Exception e1) {
 									envelope = null;
 								}
-								// Ğ´Èë±¾µØÁÄÌìÎÄ¼ş
+								// å†™å…¥æœ¬åœ°èŠå¤©æ–‡ä»¶
 								File file = new File(path + "/" + message.getSender() + ".txt");
 								PrintWriter pw;
 								try {
@@ -306,8 +311,8 @@ public class ChatApplication {
 								}
 								
 								systemMsgForCertificate = null;
-								// Ö®ºó½øÈëÁÄÌì½çÃæ
-								// ¼ÓÔØÓÃ»§ÁÄÌì¼ÇÂ¼
+								// ä¹‹åè¿›å…¥èŠå¤©ç•Œé¢
+								// åŠ è½½ç”¨æˆ·èŠå¤©è®°å½•
 								BufferedReader bufferedReader;
 								try {
 									
@@ -381,35 +386,35 @@ public class ChatApplication {
 							// update system message
 							clientHomeUI.updateMsg(msg, systemMsgForNotify.getSender());
 						} else if (object instanceof List<?>) {
-							// ÊÕµ½ÔÚÏßÁĞ±í
+							// æ”¶åˆ°åœ¨çº¿åˆ—è¡¨
 							List<String> clientList = (List<String>) object;
 							// update client list
-							System.out.println("ÁĞ±í ");
+							System.out.println("åˆ—è¡¨ ");
 							System.out.println(clientList.size());
-							// ½ÓÊÕÈº×éĞÅÏ¢
+							// æ¥æ”¶ç¾¤ç»„ä¿¡æ¯
 							List<List<String>> groups = (List<List<String>>) ois.readObject();
-							// ¸üĞÂÁĞ±í
+							// æ›´æ–°åˆ—è¡¨
 							clientHomeUI.refreshTree(clientList, groups);
 
 						} else if (object instanceof SystemMsgForCertificate) {
 							// receive address and certificate
 							systemMsgForCertificate = (SystemMsgForCertificate) object;
 						} else if (object instanceof FileSend) {
-							// Èô½ÓÊÜµ½ÎÄ¼ş
+							// è‹¥æ¥å—åˆ°æ–‡ä»¶
 							System.err.println("Get a file");
 							FileSend fileSend = (FileSend) object;
 							if (fileSend.getTo().contains("group")) {
 								AudioPlay.playAudio(wavPath + "newemail.wav");
-								// ÈôÊÕµ½µÄÊÇÈºÁÄÎÄ¼ş
+								// è‹¥æ”¶åˆ°çš„æ˜¯ç¾¤èŠæ–‡ä»¶
 								String mString = "Got A File!(Verified) ";
-								// ÅĞ¶ÏÊÇ·ñ´ò¿ªÁË´°¿Ú
+								// åˆ¤æ–­æ˜¯å¦æ‰“å¼€äº†çª—å£
 								if (chatRoomUIMap.containsKey(fileSend.getTo())) {
-									// ÁÄÌìÒÑ¾­´ò¿ª
+									// èŠå¤©å·²ç»æ‰“å¼€
 									chatRoomUIMap.get(fileSend.getTo()).refreshMsgArea(mString+ new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()), fileSend.getFrom());
 								} else {
 									clientHomeUI.refreshMsgList(fileSend.getTo(), 0);
 								}
-								// Ğ´Èë±¾µØÁÄÌìÎÄ¼ş
+								// å†™å…¥æœ¬åœ°èŠå¤©æ–‡ä»¶
 								File file = new File(path + "/" + fileSend.getTo() + ".txt");
 								PrintWriter pw;
 								try {
@@ -452,15 +457,15 @@ public class ChatApplication {
 								mString += "(Verified)";
 							else
 								mString += "(Unverified)";
-							// ÅĞ¶ÏÊÇ·ñ´ò¿ªÁË´°¿Ú
+							// åˆ¤æ–­æ˜¯å¦æ‰“å¼€äº†çª—å£
 							if (chatRoomUIMap.containsKey(fileSend.getFrom())) {
-								// ÁÄÌìÒÑ¾­´ò¿ª
+								// èŠå¤©å·²ç»æ‰“å¼€
 								chatRoomUIMap.get(fileSend.getFrom()).refreshMsgArea(mString+ new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()), fileSend.getFrom());
 							} else {
-								// ÏûÏ¢ÉÏ¸¡
+								// æ¶ˆæ¯ä¸Šæµ®
 								clientHomeUI.refreshMsgList(fileSend.getFrom(), 0);
 							}
-							// Ğ´Èë±¾µØÁÄÌìÎÄ¼ş
+							// å†™å…¥æœ¬åœ°èŠå¤©æ–‡ä»¶
 							File fileLocal = new File(path + "/" + fileSend.getFrom() + ".txt");
 							PrintWriter pw;
 							try {
@@ -504,20 +509,20 @@ public class ChatApplication {
 						} else if (object instanceof Message) {
 							System.err.println("got a message");
 							Message message = (Message) object;
-							// ÅĞ¶ÏÊÇ·ñÊÇÓÉÈºÁÄ²úÉú
+							// åˆ¤æ–­æ˜¯å¦æ˜¯ç”±ç¾¤èŠäº§ç”Ÿ
 							if (message.getReceiver().contains("group")) {
-								// ÓÃ»§ÊÕµ½ÈºÁÄÏûÏ¢
+								// ç”¨æˆ·æ”¶åˆ°ç¾¤èŠæ¶ˆæ¯
 								String msg = (String) message.getMsg();
 								AudioPlay.playAudio(wavPath + "newalert.wav");
 								System.err.println("message from group");
 								if (chatRoomUIMap.containsKey(message.getReceiver())) {
-									// Èô´°¿ÚÒÑ¿ªÆô
+									// è‹¥çª—å£å·²å¼€å¯
 									chatRoomUIMap.get(message.getReceiver()).refreshMsgArea(msg+ " "+new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()), message.getSender());
 								} else {
-									// ÏûÏ¢ÉÏ¸¡
+									// æ¶ˆæ¯ä¸Šæµ®
 									clientHomeUI.refreshMsgList(message.getReceiver(), 0);
 								}
-								// Ğ´ÈëÁÄÌìÎÄ¼ş
+								// å†™å…¥èŠå¤©æ–‡ä»¶
 								File fileLocal = new File(path + "/" + message.getReceiver() + ".txt");
 								PrintWriter pw;
 								try {
@@ -539,7 +544,7 @@ public class ChatApplication {
 							systemMsgForNotify.setType(2);
 							systemMsgForNotify.setSender(username);
 							systemMsgForNotify.setReceiver(message.getSender());
-							// Ïò·şÎñÆ÷Ñ¯ÎÊÆ¾Ö¤
+							// å‘æœåŠ¡å™¨è¯¢é—®å‡­è¯
 							try {
 								oos.writeObject(systemMsgForNotify);
 								oos.flush();
@@ -563,7 +568,7 @@ public class ChatApplication {
 							if (AsMode.equals("RSA")) {
 								key = rsa.decryptMsg((List<BigInteger>) message.getKey());
 								mString = (String) algorithmFactory(sMode, key, message.getMsg(), 1);
-								System.err.println("ĞÅÏ¢ " + mString);
+								System.err.println("ä¿¡æ¯ " + mString);
 							}
 							System.err.println(mString);
 							Boolean verify = true;
@@ -572,16 +577,16 @@ public class ChatApplication {
 								mString += "(Verified)";
 							else
 								mString += "(Unverified)";
-							// ÓÃ»§ÊÕµ½Ë½ÁÄÏûÏ¢
+							// ç”¨æˆ·æ”¶åˆ°ç§èŠæ¶ˆæ¯
 							AudioPlay.playAudio(wavPath + "newalert.wav");
 							if (chatRoomUIMap.containsKey(message.getSender())) {
-								// Èô´°¿ÚÒÑ¿ªÆô
+								// è‹¥çª—å£å·²å¼€å¯
 								chatRoomUIMap.get(message.getSender()).refreshMsgArea(mString+ new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()), message.getSender());
 							} else {
-								// ÏûÏ¢ÉÏ¸¡
+								// æ¶ˆæ¯ä¸Šæµ®
 								clientHomeUI.refreshMsgList(message.getSender(), 0);
 							}
-							// Ğ´ÈëÁÄÌìÎÄ¼ş
+							// å†™å…¥èŠå¤©æ–‡ä»¶
 							File fileLocal = new File(path + "/" + message.getSender() + ".txt");
 							PrintWriter pw;
 							try {
@@ -639,7 +644,7 @@ public class ChatApplication {
 						 * log verified
 						 */
 						this.username = username;
-						// ±íÊ¾ÓÃ»§ÊÇ·ñ±»·â½û
+						// è¡¨ç¤ºç”¨æˆ·æ˜¯å¦è¢«å°ç¦
 						index = msgForNotify.getIndex();
 						System.err.println("index: "+index);
 						clientHomeUI.setUsername(username);
