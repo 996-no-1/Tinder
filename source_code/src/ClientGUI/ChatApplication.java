@@ -12,6 +12,21 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.math.BigInteger;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 import Client.AudioPlay;
 import Client.Certificate;
@@ -21,6 +36,13 @@ import Client.SystemMsgForCertificate;
 import Client.SystemMsgForNotify;
 import SecurityAlgorithm.CaesarAlgorithm;
 import SecurityAlgorithm.DES;
+import SecurityAlgorithm.DH;
+import SecurityAlgorithm.MD5;
+import SecurityAlgorithm.PlayFairAlgorithm;
+import SecurityAlgorithm.RSA;
+import SecurityAlgorithm.TDES;
+import Client.Message;
+import SecurityAlgorithm.DigitalSignature;
 
 /**
  * This class is the client starter. this class handle the business transaction
@@ -111,6 +133,22 @@ public class ChatApplication {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void start() {
+		// Asynchronous processing message from view layer
+		receiveMSgFromView();
+		// start the window of the log page
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					clientLogwindow.frmLogPage.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+
 	}
 
 	/**
@@ -213,6 +251,10 @@ public class ChatApplication {
 								temp.setE(otherCertificate.getRSAE());
 								temp.setN(otherCertificate.getRSAN());
 								message.setMsg(algorithmFactory(otherCertificate.getsMode(), key, msg, 0));
+								if (otherCertificate.getAsMode().equals("RSA")) {
+									List<BigInteger> keys = temp.encryptMsg(key);
+									message.setKey(keys);
+								}
 								try {
 									oos.writeObject(message);
 									oos.flush();
@@ -243,7 +285,25 @@ public class ChatApplication {
 								systemMsgForNotify.setType(2);
 								systemMsgForNotify.setSender(username);
 								systemMsgForNotify.setReceiver(receiver);
-								
+								if (!receiver.contains("group")) {
+									// ask for certificate
+									try {
+										oos.writeObject(systemMsgForNotify);
+										oos.flush();
+									} catch (IOException e) {
+										e.printStackTrace();
+									}
+									while (systemMsgForCertificate == null)
+										System.err.print("get a certificate");
+									// get the target client's certificate
+									Certificate certificate = systemMsgForCertificate.getCertificate();
+									chatRoomUIMap.get(receiver).certificate = certificate;
+								} else {
+									Certificate certificate = new Certificate();
+									certificate.setAsMode("RSA");
+									certificate.setsMode("Caesar");
+									chatRoomUIMap.get(receiver).certificate = certificate;
+								}
 								
 								systemMsgForCertificate = null;
 								// 之后进入聊天界面
@@ -295,6 +355,251 @@ public class ChatApplication {
 			}
 
 		}).start();
+
+	}
+
+	/**
+	 * receive message from server
+	 */
+	private void receiveMsgFromServer() {
+		new Thread() {
+			@SuppressWarnings("unchecked")
+			public void run() {
+				try {
+					while (true) {
+						Thread.sleep(100);
+						Object object = null;
+						try {
+							object = ois.readObject();
+						} catch (EOFException e1) {
+							e1.printStackTrace();
+						}
+						if (object instanceof SystemMsgForNotify) {
+							// receive notify from server
+							SystemMsgForNotify systemMsgForNotify = (SystemMsgForNotify) object;
+							String msg = new CaesarAlgorithm("10").decryptMsg((String) systemMsgForNotify.getMsg());
+							// update system message
+							clientHomeUI.updateMsg(msg, systemMsgForNotify.getSender());
+						} else if (object instanceof List<?>) {
+							// 收到在线列表
+							List<String> clientList = (List<String>) object;
+							// update client list
+							System.out.println("列表 ");
+							System.out.println(clientList.size());
+							// 接收群组信息
+							List<List<String>> groups = (List<List<String>>) ois.readObject();
+							// 更新列表
+							clientHomeUI.refreshTree(clientList, groups);
+
+						} else if (object instanceof SystemMsgForCertificate) {
+							// receive address and certificate
+							systemMsgForCertificate = (SystemMsgForCertificate) object;
+						} else if (object instanceof FileSend) {
+							// 若接受到文件
+							System.err.println("Get a file");
+							FileSend fileSend = (FileSend) object;
+							if (fileSend.getTo().contains("group")) {
+								AudioPlay.playAudio(wavPath + "newemail.wav");
+								// 若收到的是群聊文件
+								String mString = "Got A File!(Verified) ";
+								// 判断是否打开了窗口
+								if (chatRoomUIMap.containsKey(fileSend.getTo())) {
+									// 聊天已经打开
+									chatRoomUIMap.get(fileSend.getTo()).refreshMsgArea(mString+ new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()), fileSend.getFrom());
+								} else {
+									clientHomeUI.refreshMsgList(fileSend.getTo(), 0);
+								}
+								// 写入本地聊天文件
+								File file = new File(path + "/" + fileSend.getTo() + ".txt");
+								PrintWriter pw;
+								try {
+									pw = new PrintWriter(new FileWriter(file, true));
+									pw.println(fileSend.getFrom() + " : " + "Got a file" + " "
+											+ new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
+									pw.close();
+								} catch (IOException e2) {
+									e2.printStackTrace();
+								}
+								continue;
+							}
+							BigInteger E = null;
+							BigInteger N = null;
+							SystemMsgForNotify systemMsgForNotify = new SystemMsgForNotify();
+							systemMsgForNotify.setType(2);
+							systemMsgForNotify.setSender(username);
+							systemMsgForNotify.setReceiver(fileSend.getFrom());
+							try {
+								oos.writeObject(systemMsgForNotify);
+								oos.flush();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+							systemMsgForCertificate=(SystemMsgForCertificate)ois.readObject();
+							// wait
+							while (systemMsgForCertificate == null)
+								System.err.print("");
+							System.err.println("Got a certificate");
+							Certificate senderCertificate = systemMsgForCertificate.getCertificate();
+							E = senderCertificate.getRSAE();
+							N = senderCertificate.getRSAN();
+							DigitalSignature digitalSignature = new DigitalSignature();
+							digitalSignature.setE(E);
+							digitalSignature.setN(N);
+							Boolean verify = true;
+							verify = digitalSignature.validSignature(fileSend.getMD5(), fileSend.getSignature());
+							String mString = "Got A File!";
+							if (verify)
+								mString += "(Verified)";
+							else
+								mString += "(Unverified)";
+							// 判断是否打开了窗口
+							if (chatRoomUIMap.containsKey(fileSend.getFrom())) {
+								// 聊天已经打开
+								chatRoomUIMap.get(fileSend.getFrom()).refreshMsgArea(mString+ new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()), fileSend.getFrom());
+							} else {
+								// 消息上浮
+								clientHomeUI.refreshMsgList(fileSend.getFrom(), 0);
+							}
+							// 写入本地聊天文件
+							File fileLocal = new File(path + "/" + fileSend.getFrom() + ".txt");
+							PrintWriter pw;
+							try {
+								pw = new PrintWriter(new FileWriter(fileLocal, true));
+								pw.println(fileSend.getFrom() + " : " + "Got a file" + " "
+										+ new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
+								pw.close();
+							} catch (IOException e2) {
+								e2.printStackTrace();
+							}
+							AudioPlay.playAudio(wavPath + "newemail.wav");
+							File file = new File(path +"/" + fileSend.getFilename());
+							BufferedOutputStream bbos = null;
+							FileOutputStream fos = null;
+							File file1 = null;
+							try {
+								byte[] buffer = fileSend.getFile();
+								file1 = new File(path + fileSend.getFilename());
+								fos = new FileOutputStream(file);
+								bbos = new BufferedOutputStream(fos);
+								bbos.write(buffer);
+							} catch (Exception e) {
+								e.printStackTrace();
+							} finally {
+								systemMsgForCertificate = null;
+								if (bbos != null) {
+									try {
+										bbos.close();
+									} catch (IOException e1) {
+										e1.printStackTrace();
+									}
+								}
+								if (fos != null) {
+									try {
+										fos.close();
+									} catch (IOException e1) {
+										e1.printStackTrace();
+									}
+								}
+							}
+						} else if (object instanceof Message) {
+							System.err.println("got a message");
+							Message message = (Message) object;
+							// 判断是否是由群聊产生
+							if (message.getReceiver().contains("group")) {
+								// 用户收到群聊消息
+								String msg = (String) message.getMsg();
+								AudioPlay.playAudio(wavPath + "newalert.wav");
+								System.err.println("message from group");
+								if (chatRoomUIMap.containsKey(message.getReceiver())) {
+									// 若窗口已开启
+									chatRoomUIMap.get(message.getReceiver()).refreshMsgArea(msg+ " "+new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()), message.getSender());
+								} else {
+									// 消息上浮
+									clientHomeUI.refreshMsgList(message.getReceiver(), 0);
+								}
+								// 写入聊天文件
+								File fileLocal = new File(path + "/" + message.getReceiver() + ".txt");
+								PrintWriter pw;
+								try {
+									pw = new PrintWriter(new FileWriter(fileLocal, true));
+									pw.println(message.getSender() + " : " + msg + " "
+											+ new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
+									pw.close();
+								} catch (IOException e2) {
+									e2.printStackTrace();
+								}
+								systemMsgForCertificate = null;
+								continue;
+							}
+							System.err.println(message.getSender());
+							BigInteger E = null;
+							BigInteger N = null;
+							// request for certificate
+							SystemMsgForNotify systemMsgForNotify = new SystemMsgForNotify();
+							systemMsgForNotify.setType(2);
+							systemMsgForNotify.setSender(username);
+							systemMsgForNotify.setReceiver(message.getSender());
+							// 向服务器询问凭证
+							try {
+								oos.writeObject(systemMsgForNotify);
+								oos.flush();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+							System.err.println("before");
+							// wait
+							systemMsgForCertificate=(SystemMsgForCertificate)ois.readObject();
+							while (systemMsgForCertificate == null)
+								System.err.print("");
+							System.out.println("Got");
+							Certificate senderCertificate = systemMsgForCertificate.getCertificate();
+							E = senderCertificate.getRSAE();
+							N = senderCertificate.getRSAN();
+							DigitalSignature digitalSignature = new DigitalSignature();
+							digitalSignature.setE(E);
+							digitalSignature.setN(N);
+							String key = "";
+							String mString = "";
+							if (AsMode.equals("RSA")) {
+								key = rsa.decryptMsg((List<BigInteger>) message.getKey());
+								mString = (String) algorithmFactory(sMode, key, message.getMsg(), 1);
+								System.err.println("信息 " + mString);
+							}
+							System.err.println(mString);
+							Boolean verify = true;
+							verify = digitalSignature.validSignature(mString, message.getDigitalSignature());
+							if (verify)
+								mString += "(Verified)";
+							else
+								mString += "(Unverified)";
+							// 用户收到私聊消息
+							AudioPlay.playAudio(wavPath + "newalert.wav");
+							if (chatRoomUIMap.containsKey(message.getSender())) {
+								// 若窗口已开启
+								chatRoomUIMap.get(message.getSender()).refreshMsgArea(mString+ new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()), message.getSender());
+							} else {
+								// 消息上浮
+								clientHomeUI.refreshMsgList(message.getSender(), 0);
+							}
+							// 写入聊天文件
+							File fileLocal = new File(path + "/" + message.getSender() + ".txt");
+							PrintWriter pw;
+							try {
+								pw = new PrintWriter(new FileWriter(fileLocal, true));
+								pw.println(message.getSender() + " : " + mString + " "
+										+ new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
+								pw.close();
+							} catch (IOException e2) {
+								e2.printStackTrace();
+							}
+							systemMsgForCertificate = null;
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}.start();
 
 	}
 

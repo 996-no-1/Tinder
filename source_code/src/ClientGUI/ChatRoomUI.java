@@ -13,6 +13,10 @@ import java.awt.event.WindowListener;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.JRadioButton;
@@ -37,15 +41,12 @@ public class ChatRoomUI {
 	private JTextField fileChoseField;
 	private JTextArea msgTextFiled;
 	private JLabel reveiverLable;
+	private JRadioButton rdbtnMessage;
+	private JRadioButton rdbtnFile;
+	private JLabel messageLable;
 	private JButton selectFileBtn;
 	private JButton sendFileBtn;
 	private JButton sendMsgBtn;
-	private JButton receiveMsgBtn;
-	private JButton musicBtn;
-	private JButton danceBtn;
-	private JButton rapBtn;
-	private JButton radioBtn;
-	private JButton sendMovieBtn;
 	private ChatApplication chatApplication;
 	private String filePath="";
 	String msg="";
@@ -109,6 +110,15 @@ public class ChatRoomUI {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		try {
+			BeautyEyeLNFHelper.frameBorderStyle = BeautyEyeLNFHelper.FrameBorderStyle.generalNoTranslucencyShadow;
+			UIManager.put("RootPane.setupButtonVisible", false);
+			org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		frmTinderChat = new JFrame();
 		frmTinderChat.setResizable(false);
 		frmTinderChat.setTitle("Tinder Chat");
@@ -193,6 +203,10 @@ public class ChatRoomUI {
 					selectFileBtn.setVisible(true);
 					sendFileBtn.setVisible(true);
 				}else {
+					messageLable.setVisible(true);
+					msgField.setVisible(true);
+					sendMsgBtn.setVisible(true);
+					
 					fileChoseField.setVisible(false);
 					selectFileBtn.setVisible(false);
 					sendFileBtn.setVisible(false);
@@ -275,6 +289,11 @@ public class ChatRoomUI {
 						return;
 					}
 					//∑¢ÀÕ–≈œ¢
+					String key = chatApplication.username;
+					String msg = msgField.getText();
+					Envelope envelope = new Envelope();
+					envelope.setSourceName("ChatRoomUI");
+					List<Object> objects = new ArrayList<>();
 					objects.add(reveiverLable.getText());
 					objects.add(msg);
 					objects.add(key);

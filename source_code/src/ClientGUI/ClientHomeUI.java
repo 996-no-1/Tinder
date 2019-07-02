@@ -14,6 +14,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -25,6 +32,11 @@ import javax.swing.tree.MutableTreeNode;
 
 import org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper;
 
+import Client.AudioPlay;
+import ClientGUI.Envelope;
+
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 
 public class ClientHomeUI {
 
@@ -76,9 +88,20 @@ public class ClientHomeUI {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		try {
+			BeautyEyeLNFHelper.frameBorderStyle = BeautyEyeLNFHelper.FrameBorderStyle.generalNoTranslucencyShadow;
+			UIManager.put("RootPane.setupButtonVisible", false);
+			org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		frmTinderClient = new JFrame();
 		frmTinderClient.setResizable(false);
 		frmTinderClient.setTitle("Tinder Client");
+		frmTinderClient.setBounds(100, 100, 451, 777);
+		frmTinderClient.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmTinderClient.getContentPane().setLayout(null);
 		
 		logoutBtn = new JButton("Logout");
 		logoutBtn.setFont(new Font("宋体", Font.PLAIN, 11));
@@ -146,6 +169,9 @@ public class ClientHomeUI {
 			scrollPane_1.remove(systemTextArea);
 			systemTextArea=null;
 		}
+		systemTextArea = new JTextArea();
+		systemMsg+="\n"+msg;
+		systemTextArea.setText(systemMsg);
 		scrollPane_1.setViewportView(systemTextArea);
 		scrollPane.validate();
 		scrollPane.repaint();
@@ -193,6 +219,9 @@ public class ClientHomeUI {
 		}
 		this.model.reload(msglistNode);
 		clientListTree.validate();
+		clientListTree.repaint();
+		scrollPane.validate();
+		scrollPane.repaint();
 		frmTinderClient.validate();
 		frmTinderClient.repaint();
 	}
@@ -223,6 +252,17 @@ public class ClientHomeUI {
 			new DefaultMutableTreeNode("Tinder List") {
 				private static final long serialVersionUID = 1L;
 				{
+					if (msglistNode==null) {
+						DefaultMutableTreeNode msglist=new DefaultMutableTreeNode("New Message");
+						add(new DefaultMutableTreeNode(msglist));
+						msglistNode=msglist;
+					}else {
+						add(msglistNode);
+						msglistNode.removeAllChildren();
+						for (DefaultMutableTreeNode node : newMsgList.values()) {
+							msglistNode.add(node);
+						}
+					}
 					for (List<String> groupList : groups) {
 						DefaultMutableTreeNode curNode;
 						curNode=new DefaultMutableTreeNode(groupList.get(0));
@@ -279,17 +319,6 @@ public class ClientHomeUI {
 						//普通成员
 						this.setIcon(new ImageIcon("image/geren.png"));
 					}
-					if (msglistNode==null) {
-						DefaultMutableTreeNode msglist=new DefaultMutableTreeNode("New Message");
-						add(new DefaultMutableTreeNode(msglist));
-						msglistNode=msglist;
-					}else {
-						add(msglistNode);
-						msglistNode.removeAllChildren();
-						for (DefaultMutableTreeNode node : newMsgList.values()) {
-							msglistNode.add(node);
-						}
-					}
 				}
             return this;
         }
@@ -306,6 +335,8 @@ public class ClientHomeUI {
 		usernameLable = new JLabel(username);
 		usernameLable.setBounds(89, 16, 72, 18);
 		frmTinderClient.getContentPane().add(usernameLable);
+		frmTinderClient.validate();
+		frmTinderClient.repaint();
 	}
 	
 	
@@ -370,6 +401,9 @@ public class ClientHomeUI {
 					chatApplication.chatRoomUIMap.put(cur.toString(), chatRoomUI);
 					chatRoomUI.frmTinderChat.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 					chatRoomUI.frmTinderChat.setVisible(true);
+					Envelope envelope = new Envelope();
+					envelope.setSourceName("ClientHomeUI");
+					List<Object> objects = new ArrayList<>();
 					objects.add(cur.toString());
 					envelope.setMsg(objects);
 					chatApplication.setEnvelope(envelope);
