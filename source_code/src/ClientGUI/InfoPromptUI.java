@@ -16,6 +16,10 @@ import java.awt.Window.Type;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 /**
  * alert Ui
  * @author Wang Zhichao 2019/06/25
@@ -25,6 +29,8 @@ public class InfoPromptUI extends JDialog {
 
 	JFrame frmWarning;
 	private JButton btnAccept;
+	private JLabel info;
+	private JFrame nextWindow = null;
 
 	/**
 	 * Launch the application.
@@ -56,6 +62,9 @@ public class InfoPromptUI extends JDialog {
 		frmWarning = new JFrame();
 		frmWarning.setTitle("Warning");
 		frmWarning.setType(Type.POPUP);
+		frmWarning.setBounds(100, 100, 446, 248);
+		frmWarning.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmWarning.getContentPane().setLayout(null);
 
 		btnAccept = new JButton("Accept");
 		btnAccept.setBounds(151, 142, 113, 27);
@@ -74,6 +83,15 @@ public class InfoPromptUI extends JDialog {
 		frmWarning.getContentPane().add(info);
 
 		addActionListener(btnAccept);
+	}
+
+	/**
+	 * modify content in alert window
+	 * 
+	 * @param content
+	 */
+	public void setLabel(String content) {
+		info.setText(content);
 	}
 
 	/**

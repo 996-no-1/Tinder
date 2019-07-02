@@ -19,6 +19,10 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.awt.event.ActionEvent;
+import java.awt.Color;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
 
 public class ClientLogUI {
 
@@ -123,4 +127,39 @@ public class ClientLogUI {
 		frmLogPage.getContentPane().add(lblEncryptionMode);
 		addActionListener(signInBtn);
 	}
+	
+	/**
+	 * add listener
+	 * 
+	 * @param saveButton
+	 */
+	private void addActionListener(JButton saveButton) {
+		saveButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Object event = e.getSource();
+				if (event.equals(signInBtn)) {
+					Envelope emsg = new Envelope();
+					emsg.setSourceName("ClientLogUI");
+					List<Object> msg = new ArrayList<>();
+					String password = "";
+					char[] words = passwordField.getPassword();
+					for (char c : words) {
+						password += c;
+					}
+					msg.add(usernameField.getText().toString());
+					msg.add(password);
+					emsg.setMsg(msg);
+					chatApplication.setEnvelope(emsg);
+					chatApplication.setAsMode("RSA");
+					chatApplication.setSMode((String) choseBtn.getSelectedItem());
+				}
+
+			}
+
+		});
+	}
+	
+	
+
 }
