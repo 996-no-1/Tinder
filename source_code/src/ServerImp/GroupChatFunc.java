@@ -16,11 +16,6 @@ import db.entity.Group;
 
 public class GroupChatFunc {
 	
-	public static void main(String[] args) {
-		String a = "name[Group]";
-		System.err.println(a.split("\\[")[1]);
-	}
-	
 	private Map<String, ObjectOutputStream> oos = null;
 	
 	public GroupChatFunc(Map<String, ObjectOutputStream> oos){
@@ -40,7 +35,21 @@ public class GroupChatFunc {
 		}
 		
 	}
-
+	
+	public void processGroupChat(FileSend fs) throws IOException {
+		
+		String fromName = fs.getFrom(),groupName = fs.getTo().split("\\[")[0];
+		List<String> toList;
+		
+		if(fromName.equals("Admin")) {
+			
+		}else {
+			toList = getToList(groupName);
+			transferFile(fromName,fs,toList);
+		}
+		
+	}
+	
 	private void transferCreate(String fromName,String GroupName,String[] toList) {
 		
 	}
@@ -53,7 +62,15 @@ public class GroupChatFunc {
 		}
 		
 	}
-
+	
+	private void transferFile(String fromName,FileSend fs,List<String> toList) throws IOException{
+		
+		for (String ite : toList) {
+			if(ite.equals(fromName)) continue;
+			oos.get(ite).writeObject(fs);oos.get(ite).flush();
+		}
+	}
+	
 	private void transferLogout() {
 		
 	}
@@ -81,5 +98,9 @@ public class GroupChatFunc {
 		
 		return res;
 	}
-
+	
+	public static void main(String[] args) {
+		String a = "name[Group]";
+		System.err.println(a.split("\\[")[1]);
+	}
 }
