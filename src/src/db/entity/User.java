@@ -4,15 +4,17 @@ package db.entity;
  * User entity class
  * 
  * @author DesmondCobb
+ * @version 20190703.1146
  *
  */
 public class User {
-	
+
 	private String username = null;
-	private String nickname = null;
 	private String gender = null;
 	private int age = 0;
-	private String email = null;
+	private String note = null;
+	private boolean ban = false;
+	private String hashedPassword = null;
 
 	/**
 	 * Default constructor
@@ -29,13 +31,14 @@ public class User {
 	 * @param age
 	 * @param email
 	 */
-	public User(String username, String nickname, String gender, int age, String email) {
+	public User(String username, String gender, int age, String note, boolean isBanned, String hashedPassword) {
 		super();
 		this.username = username;
-		this.nickname = nickname;
 		this.gender = gender;
 		this.age = age;
-		this.email = email;
+		this.setNote(note);
+		this.ban = isBanned;
+		this.hashedPassword = hashedPassword;
 	}
 
 	/**
@@ -51,21 +54,6 @@ public class User {
 	 */
 	public void setUsername(String username) {
 		this.username = username;
-	}
-
-	/**
-	 * @return the nickname
-	 */
-	public String getNickname() {
-		return nickname;
-	}
-
-	/**
-	 * @param nickname
-	 *            the nickname to set
-	 */
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
 	}
 
 	/**
@@ -99,18 +87,48 @@ public class User {
 	}
 
 	/**
-	 * @return the email
+	 * @return the ban
 	 */
-	public String getEmail() {
-		return email;
+	public boolean isBan() {
+		return ban;
 	}
 
 	/**
-	 * @param email
-	 *            the email to set
+	 * @param ban
+	 *            the ban to set
 	 */
-	public void setEmail(String email) {
-		this.email = email;
+	public void setBan(boolean ban) {
+		this.ban = ban;
+	}
+
+	/**
+	 * @return the hashedPassword
+	 */
+	public String getHashedPassword() {
+		return hashedPassword;
+	}
+
+	/**
+	 * @param hashedPassword
+	 *            the hashedPassword to set
+	 */
+	public void setHashedPassword(String hashedPassword) {
+		this.hashedPassword = hashedPassword;
+	}
+
+	/**
+	 * @return the note
+	 */
+	public String getNote() {
+		return note;
+	}
+
+	/**
+	 * @param note
+	 *            the note to set
+	 */
+	public void setNote(String note) {
+		this.note = note;
 	}
 
 }
