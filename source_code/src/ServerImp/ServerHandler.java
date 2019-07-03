@@ -124,7 +124,10 @@ public class ServerHandler implements Runnable {
 			}
 			//receive client's certificate
 			Certificate certificate = (Certificate) ois.readObject();
-
+			
+			System.err.println("certificateE: " + certificate.getRSAE() + " certificateN: " + certificate.getRSAN());
+			
+			
 			certificateList.put(curClient, certificate);
 			clientAsMode=certificate.getAsMode();
 			// Broadcast client list and send online notice to every client
@@ -142,7 +145,16 @@ public class ServerHandler implements Runnable {
 				//Transfer online clients list
 				boradcastout.writeObject(list);
 				boradcastout.flush();
-				boradcastout.writeObject(broadcast);
+				
+				//Transfer all group and their member list
+				GroupDao gdao = new GroupDao();
+				List<Group> groupList = gdao.getAllGroup();
+				List<List<String>> groupMemberList = new ArrayList<List<String>>();
+				
+				UserDao udao = new UserDao();
+				List<String> notInGroupMembers = udao.getNotInGroupUserList();
+				notInGroupMembers.add(0, "Default");
+				groupMemberList.add(notInGroupMembers);
 				
 				for (Group group : groupList) {
 					List<String> tmp = new ArrayList<String>();
@@ -154,6 +166,11 @@ public class ServerHandler implements Runnable {
 				}
 				boradcastout.writeObject(groupMemberList);
 				boradcastout.flush();
+				
+				
+				boradcastout.writeObject(broadcast);
+				boradcastout.flush();
+				boradcastout=null;
 			}
 			
 			/**
@@ -273,4 +290,33 @@ public class ServerHandler implements Runnable {
 		}
 	}
 
+	public void offlineNotify() {
+		System.err.println(curClient + " exit");
+		curClientIndex.remove(curClient);
+		clientSockets.remove(curClient);
+		certificateList.remove(curClient);
+		clientOut.remove(curClient);
+		clientIn.remove(curClient);
+		SystemMsgForNotify broadcast = new SystemMsgForNotify();
+		broadcast.setReceiver("everyone");
+		broadcast.setSender("server");
+		broadcast.setType(1);
+		broadcast.setMsg(new CaesarAlgorithm("10").encryptMsg("Client " + curClient + " is offline."));
+		try {
+			List<String> list=new ArrayList<>();
+			for (String string : curClientIndex.keySet()) {
+				list.add(string);
+			}
+			for (ObjectOutputStream boradcastout : clientOut.values()) {
+				boradcastout.writeObject(list);
+				boradcastout.flush();
+				boradcastout.writeObject(broadcast);
+				boradcastout.flush();
+				boradcastout=null;
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+
+	}
 }
