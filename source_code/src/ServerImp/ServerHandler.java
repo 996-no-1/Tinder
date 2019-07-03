@@ -15,8 +15,6 @@ import java.util.Map;
 
 import Client.Certificate;
 import Client.ClientInfo;
-import Client.FileSend;
-import Client.Message;
 import Client.SystemMsgForCertificate;
 import Client.SystemMsgForNotify;
 import SecurityAlgorithm.CaesarAlgorithm;
