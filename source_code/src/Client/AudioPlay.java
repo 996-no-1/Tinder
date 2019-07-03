@@ -9,19 +9,6 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 
-	public static void main(String[] args) {
-		try {
-			AudioPlay.playAudio("C:/Users/12284/Desktop/msn_wav/online.wav");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnsupportedAudioFileException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-
 public class AudioPlay {
 	public static void playAudio(String filePath) throws IOException, UnsupportedAudioFileException {
 		 try{
@@ -35,4 +22,15 @@ public class AudioPlay {
 
 	
 
+	public static void main(String[] args) {
+		try {
+			AudioPlay.playAudio("C:/Users/12284/Desktop/msn_wav/online.wav");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedAudioFileException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
