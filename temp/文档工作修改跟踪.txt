@@ -1,9 +1,9 @@
-Èç¹û¶Ô12¸öÎÄµµ½øÐÐÔöÉ¾¸Ä²é£¬ÐèÒª¶ÔÈçÏÂÎÄµµ½øÐÐ¸üÐÂ£º
-ÏîÄ¿¼Æ»®ÑÐ¾¿½×¶Î--NPUSS-Tinder-SDS-1.0 Èí¼þÎÄµµ¹æ·¶--2
-	             NPUSS-Tinder-SDP-1.0(E) Èí¼þ¿ª·¢¼Æ»®--2.2¡¢2.3¡¢3.3
-	             NPUSS-Tinder-SCMP-1.0(E) Èí¼þÅäÖÃ¹ÜÀí¼Æ»®--4.3¡¢4.4.1
-ÒÔ¼°ËùÓÐÏà¹ØÎÄµµµÄ1.4²¿·Ö
+ï»¿å¦‚æžœå¯¹12ä¸ªæ–‡æ¡£è¿›è¡Œå¢žåˆ æ”¹æŸ¥ï¼Œéœ€è¦å¯¹å¦‚ä¸‹æ–‡æ¡£è¿›è¡Œæ›´æ–°ï¼š
+é¡¹ç›®è®¡åˆ’ç ”ç©¶é˜¶æ®µ--NPUSS-Tinder-SDS-1.0 è½¯ä»¶æ–‡æ¡£è§„èŒƒ--2
+	             NPUSS-Tinder-SDP-1.0(E) è½¯ä»¶å¼€å‘è®¡åˆ’--2.2ã€2.3ã€3.3
+	             NPUSS-Tinder-SCMP-1.0(E) è½¯ä»¶é…ç½®ç®¡ç†è®¡åˆ’--4.3ã€4.4.1
+ä»¥åŠæ‰€æœ‰ç›¸å…³æ–‡æ¡£çš„1.4éƒ¨åˆ†
 
-Èç¹ûÌí¼Ó»áÒé¼ÍÒªÀàµÄÎÄµµ£¬ÐèÒªÔö¼ÓÃüÃû¹æ·¶£¬ÔòÐèÒª¸ü¸Ä£º
-ÏîÄ¿¼Æ»®ÑÐ¾¿½×¶Î--NPUSS-Tinder-SCMP-1.0(E) Èí¼þÅäÖÃ¹ÜÀí¼Æ»®--5.1.2
-	            NPUSS-Tinder-DNR-1.0 ÎÄµµ±àºÅ¹æÔò--2.2
+å¦‚æžœæ·»åŠ ä¼šè®®çºªè¦ç±»çš„æ–‡æ¡£ï¼Œéœ€è¦å¢žåŠ å‘½åè§„èŒƒï¼Œåˆ™éœ€è¦æ›´æ”¹ï¼š
+é¡¹ç›®è®¡åˆ’ç ”ç©¶é˜¶æ®µ--NPUSS-Tinder-SCMP-1.0(E) è½¯ä»¶é…ç½®ç®¡ç†è®¡åˆ’--5.1.2
+	            NPUSS-Tinder-DNR-1.0 æ–‡æ¡£ç¼–å·è§„åˆ™--2.2
