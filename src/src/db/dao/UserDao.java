@@ -14,7 +14,7 @@ import db.util.DBFactory;
  * Database access object for entity User
  * 
  * @author DesmondCobb
- * @version 20190703.1454
+ * @version 20190704.1448
  *
  */
 public class UserDao {
@@ -226,6 +226,46 @@ public class UserDao {
 			e.printStackTrace();
 		}
 		return status;
+	}
+
+	/**
+	 * Get all users who a not in a group yet
+	 * 
+	 * @return
+	 */
+	public List<String> getNotInGroupUserList() {
+		List<String> list = new ArrayList<String>();
+		try {
+			Connection conn = DBFactory.getINSTANCE().getConnection();
+
+			String getUserSql = "select username from user";
+			PreparedStatement getUserPs = conn.prepareStatement(getUserSql);
+			ResultSet getUserRs = getUserPs.executeQuery();
+			List<String> allUsername = new ArrayList<String>();
+			while (getUserRs.next()) {
+				String aUsername = getUserRs.getString(1);
+				allUsername.add(aUsername);
+			}
+
+			String getGUserSql = "select distinct username from group_user";
+			PreparedStatement getGUserPs = conn.prepareStatement(getGUserSql);
+			ResultSet getGUserRs = getGUserPs.executeQuery();
+			List<String> allGUsername = new ArrayList<String>();
+			while (getGUserRs.next()) {
+				String aGUsername = getGUserRs.getString(1);
+				allGUsername.add(aGUsername);
+			}
+
+			for (int i = 0; i < allUsername.size(); i++) {
+				String aUsername = allUsername.get(i);
+				if (allGUsername.indexOf(aUsername) == -1) {
+					list.add(aUsername);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 
 }
