@@ -10,6 +10,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -88,6 +89,52 @@ public class ServerHandler implements Runnable {
 			while (true) {
 				Thread.sleep(100);
 				logReq = (ClientInfo) ois.readObject();
+				
+				if(logReq.getUsername().equals("Admin")) {
+					if(clientLog.get(logReq.getUsername()).equals(logReq.getMD5())) {
+						
+						SystemMsgForNotify failInfo = new SystemMsgForNotify();
+						String msg = "Welcome to the chat room!";
+						failInfo.setMsg(msg);
+						failInfo.setSender("Server");
+						oos.writeObject(failInfo);oos.flush();
+						
+						
+						List<String> groupNameList = new ArrayList<String>();
+						
+						GroupDao gdao = new GroupDao();
+						List<Group> groupList = gdao.getAllGroup();
+						for (Group group : groupList) {
+							groupNameList.add(group.getGroupname());
+						}
+						
+						oos.writeObject(groupNameList);oos.flush();
+						
+						
+						List<String> userNameList = new ArrayList<String>();
+						
+						for(Iterator<String> ite = clientLog.keySet().iterator();ite.hasNext();) {
+							String tmp = ite.next();
+							if(tmp != "Admin") userNameList.add(tmp);
+						}
+						
+						oos.writeObject(userNameList);oos.flush();
+						
+						
+						break;
+					}else {
+						SystemMsgForNotify failInfo = new SystemMsgForNotify();
+						String msg = "please check your password!";
+						failInfo.setMsg(msg);
+						failInfo.setSender("Server");
+						oos.writeObject(failInfo);oos.flush();
+						
+						System.err.println("Wrong password!");
+						
+						continue;
+					}
+				}
+				
 				if (clientLog.containsKey(logReq.getUsrname())) {
 					if (clientLog.get(logReq.getUsrname()).equals(logReq.getMD5())&&curClientIndex.get(logReq.getUsrname()) == null) {
 						// store client information
@@ -122,55 +169,73 @@ public class ServerHandler implements Runnable {
 				oos.writeObject(failInfo);
 				oos.flush();
 			}
-			//receive client's certificate
-			Certificate certificate = (Certificate) ois.readObject();
-			
-			System.err.println("certificateE: " + certificate.getRSAE() + " certificateN: " + certificate.getRSAN());
-			
-			
-			certificateList.put(curClient, certificate);
-			clientAsMode=certificate.getAsMode();
-			// Broadcast client list and send online notice to every client
-			SystemMsgForNotify broadcast = new SystemMsgForNotify();
-			broadcast.setReceiver("everyone");
-			broadcast.setSender("server");
-			broadcast.setType(1);
-			broadcast.setMsg(new CaesarAlgorithm("10").encryptMsg("Client " + curClient + " is online!"));
-			List<String> list=new ArrayList<>();
-			for (String string : curClientIndex.keySet()) {
-				list.add(string);
-			}
-			for (ObjectOutputStream boradcastout : clientOut.values()) {
+			if(!logReq.getUsername().equals("Admin")) {
+				//receive client's certificate
+				Certificate certificate = (Certificate) ois.readObject();
 				
-				//Transfer online clients list
-				boradcastout.writeObject(list);
-				boradcastout.flush();
+				System.err.println("certificateE: " + certificate.getRSAE() + " certificateN: " + certificate.getRSAN());
 				
-				//Transfer all group and their member list
-				GroupDao gdao = new GroupDao();
-				List<Group> groupList = gdao.getAllGroup();
-				List<List<String>> groupMemberList = new ArrayList<List<String>>();
 				
-				UserDao udao = new UserDao();
-				List<String> notInGroupMembers = udao.getNotInGroupUserList();
-				notInGroupMembers.add(0, "Default");
-				groupMemberList.add(notInGroupMembers);
-				
-				for (Group group : groupList) {
-					List<String> tmp = new ArrayList<String>();
-					tmp.add(group.getGroupname());
-					for (String tmpUsername : group.getMemberUsernameList()) {
-						tmp.add(tmpUsername);
-					}
-					groupMemberList.add(tmp);
+				certificateList.put(curClient, certificate);
+				clientAsMode=certificate.getAsMode();
+				// Broadcast client list and send online notice to every client
+				SystemMsgForNotify broadcast = new SystemMsgForNotify();
+				broadcast.setReceiver("everyone");
+				broadcast.setSender("server");
+				broadcast.setType(1);
+				broadcast.setMsg(new CaesarAlgorithm("10").encryptMsg("Client " + curClient + " is online!"));
+				List<String> list=new ArrayList<>();
+				for (String string : curClientIndex.keySet()) {
+					list.add(string);
 				}
-				boradcastout.writeObject(groupMemberList);
-				boradcastout.flush();
-				
-				
-				boradcastout.writeObject(broadcast);
-				boradcastout.flush();
-				boradcastout=null;
+				for (ObjectOutputStream boradcastout : clientOut.values()) {
+					
+					//Transfer online clients list
+					boradcastout.writeObject(list);
+					boradcastout.flush();
+					
+					//Transfer all group and their member list
+					GroupDao gdao = new GroupDao();
+					List<Group> groupList = gdao.getAllGroup();
+					List<List<String>> groupMemberList = new ArrayList<List<String>>();
+					
+					UserDao udao = new UserDao();
+					List<String> notInGroupMembers = udao.getNotInGroupUserList();
+					notInGroupMembers.add(0, "Default");
+					groupMemberList.add(notInGroupMembers);
+					
+					for (Group group : groupList) {
+						List<String> tmp = new ArrayList<String>();
+						tmp.add(group.getGroupname());
+						for (String tmpUsername : group.getMemberUsernameList()) {
+							tmp.add(tmpUsername);
+						}
+						groupMemberList.add(tmp);
+					}
+					boradcastout.writeObject(groupMemberList);
+					boradcastout.flush();
+					
+					//Transfer user information
+					List<ClientInfo> clientInfoList = new ArrayList<>();
+					List<User> ul = udao.getAllUser();
+					
+					for (User user : ul) {
+						ClientInfo tmp = new ClientInfo();
+						tmp.setUsername(user.getUsername());
+						tmp.setNote(user.getNote());
+						tmp.setGender(user.getGender());
+						tmp.setAge(user.getAge());
+						clientInfoList.add(tmp);
+					}
+					boradcastout.writeObject(clientInfoList);
+					boradcastout.flush();
+					
+					//Transfer clientInfo list
+					
+					boradcastout.writeObject(broadcast);
+					boradcastout.flush();
+					boradcastout=null;
+				}
 			}
 			
 			/**
@@ -195,8 +260,8 @@ public class ServerHandler implements Runnable {
 							//System.err.println("request"+systemMsgForNotify.getSender());
 							SystemMsgForCertificate systemMsgForCertificate=new SystemMsgForCertificate();
 							Socket to=clientSockets.get(systemMsgForNotify.getReceiver());
-							systemMsgForCertificate.setHost(to.getInetAddress().getHostName());
-							systemMsgForCertificate.setPort(curClientIndex.get(systemMsgForNotify.getReceiver()));
+							//systemMsgForCertificate.setHost(to.getInetAddress().getHostName());
+							//systemMsgForCertificate.setPort(curClientIndex.get(systemMsgForNotify.getReceiver()));
 							//System.err.println(systemMsgForNotify.getReceiver()+" »ØÓ¦  "+systemMsgForCertificate.getPort());
 							systemMsgForCertificate.setCertificate(certificateList.get(systemMsgForNotify.getReceiver()));
 							
@@ -220,11 +285,151 @@ public class ServerHandler implements Runnable {
 									}
 									oos.writeObject(allUserNameList);oos.flush();
 									
-									
 								}else if(revMsg.getMsg().toString().startsWith("GroupAdd")) {
 									String[] params = revMsg.getMsg().toString().split("\\.\\.");
 									if(params.length > 1) {
 										
+										//Add new group
+										String groupName = params[1];
+										ArrayList<String> groupUserList = new ArrayList<String>();
+										for(int i = 2;i < params.length;i++) {
+											groupUserList.add(params[i]);
+										}
+										
+										GroupDao gdao = new GroupDao();
+										Boolean suc = gdao.createGroup(groupName);
+										gdao.addUserToGroup(groupName, groupUserList);
+										
+										//Instructions of success or fail for adding new group
+										if(suc) {
+											Message msg = new Message();
+											msg.setReceiver("Admin");
+											msg.setSender("Server");
+											msg.setMsg("New Group Add Success");
+											oos.writeObject(msg);oos.flush();
+											
+											List<Group> groupList = gdao.getAllGroup();
+											List<String> groupNameList = new ArrayList<String>();
+											
+											for (Group group : groupList) {
+												groupNameList.add(group.getGroupname());
+											}
+											
+											oos.writeObject(groupNameList);oos.flush();
+										}else {
+											
+										}
+									}
+								}else if(revMsg.getMsg().toString().startsWith("BeginModifyGroup")) {
+									
+									List<String> userNeedRefresh = new ArrayList<>();
+									
+									GroupDao gdao = new GroupDao();
+									String[] params = revMsg.getMsg().toString().split("\\.\\.");
+									
+									String groupName = params[1];
+									
+									List<String> extraGroupMemberNameList,insideGroupMemberNameList;
+									
+									Message sm = new Message();
+									sm.setSender("Server");
+									sm.setReceiver("Admin");
+									sm.setMsg("GroupModifying");
+									
+									oos.writeObject(sm);oos.flush();
+									
+									extraGroupMemberNameList = gdao.getAllUserNotIn(groupName);
+									insideGroupMemberNameList = gdao.getAllUserIn(groupName);
+									
+									oos.writeObject(extraGroupMemberNameList);oos.flush();
+									oos.writeObject(insideGroupMemberNameList);oos.flush();
+									
+									while(true) {
+										
+										System.err.println("Begin roop");
+										
+										Message req = (Message) ois.readObject();
+										
+										if(req.getMsg().toString().startsWith("AddUserToGroup")) {
+											String[] paramsList = req.getMsg().toString().split("\\.\\.");
+											List<String> addUserNameList = new ArrayList<>();
+											
+											for (int i = 1;i < paramsList.length;i++) {
+												addUserNameList.add(paramsList[i]);
+												if(userNeedRefresh.indexOf(paramsList[i]) == -1) {
+													userNeedRefresh.add(paramsList[i]);
+												}
+											}
+											
+											gdao.addUserToGroup(groupName, addUserNameList);
+											
+											Message addResMsg = new Message();
+											addResMsg.setSender("Server");
+											addResMsg.setReceiver("Admin");
+											addResMsg.setMsg("Add User into Group Success!");
+											
+											oos.writeObject(addResMsg);oos.flush();
+											
+											extraGroupMemberNameList = gdao.getAllUserNotIn(groupName);
+											insideGroupMemberNameList = gdao.getAllUserIn(groupName);
+											
+											oos.writeObject(extraGroupMemberNameList);oos.flush();
+											oos.writeObject(insideGroupMemberNameList);oos.flush();
+											
+										}else if(req.getMsg().toString().startsWith("DiscardUserFromGroup")) {
+											String[] paramsList = req.getMsg().toString().split("\\.\\.");
+											List<String> discardUserNameList = new ArrayList<>();
+											
+											for (int i = 1;i < paramsList.length;i++) {
+												discardUserNameList.add(paramsList[i]);
+												if(userNeedRefresh.indexOf(paramsList[i]) == -1) {
+													userNeedRefresh.add(paramsList[i]);
+												}
+											}
+											
+											for (String string : discardUserNameList) {
+												gdao.deleteUserFromGroup(groupName, string);
+											}
+											
+											Message addResMsg = new Message();
+											addResMsg.setSender("Server");
+											addResMsg.setReceiver("Admin");
+											addResMsg.setMsg("Discard User from Group Success!");
+											
+											oos.writeObject(addResMsg);oos.flush();
+											
+											extraGroupMemberNameList = gdao.getAllUserNotIn(groupName);
+											insideGroupMemberNameList = gdao.getAllUserIn(groupName);
+											
+											oos.writeObject(extraGroupMemberNameList);oos.flush();
+											oos.writeObject(insideGroupMemberNameList);oos.flush();
+										}else {
+											
+											List<Group> groupList = gdao.getAllGroup();
+											List<List<String>> groupMemberList = new ArrayList<List<String>>();
+											
+											UserDao udao = new UserDao();
+											List<String> notInGroupMembers = udao.getNotInGroupUserList();
+											notInGroupMembers.add(0, "Default");
+											groupMemberList.add(notInGroupMembers);
+											
+											for (Group group : groupList) {
+												List<String> tmp = new ArrayList<String>();
+												tmp.add(group.getGroupname());
+												for (String tmpUsername : group.getMemberUsernameList()) {
+													tmp.add(tmpUsername);
+												}
+												groupMemberList.add(tmp);
+											}
+											
+											for (String string : userNeedRefresh) {
+												ObjectOutputStream TMPOOS = clientOut.get(string);
+												if(TMPOOS != null) {
+													TMPOOS.writeObject(groupMemberList);TMPOOS.flush();
+												}
+											}
+											break;
+										}
 									}
 								}
 							}else {
@@ -246,15 +451,34 @@ public class ServerHandler implements Runnable {
 									
 								}
 							}
-						}else if(object instanceof FileSend) {
-							FileSend sfs = (FileSend) object;
-							if(!sfs.getTo().split("\\[")[1].equals("group]")) {
-								String receive = sfs.getTo();
-								clientOut.get(receive).writeObject(sfs);clientOut.get(receive).flush();
-							}else {
-								GroupChatFunc gcf = new GroupChatFunc(clientOut);
-								gcf.processGroupChat(sfs);
+						}else if(object instanceof ClientInfo) {
+							ClientInfo tmp = (ClientInfo) object;
+							UserDao udao = new UserDao();
+							User tmpU = new User();
+							tmpU.setUsername(tmp.getUsername());
+							tmpU.setAge(tmp.getAge());
+							tmpU.setGender(tmp.getGender());
+							tmpU.setNote(tmp.getNote());
+							tmpU.setHashedPassword(tmp.getMD5());
+							udao.updateUser(tmpU);
+							
+							List<ClientInfo> clientInfoList = new ArrayList<>();
+							List<User> ul = udao.getAllUser();
+							
+							for (User user : ul) {
+								ClientInfo tt = new ClientInfo();
+								tt.setUsername(user.getUsername());
+								tt.setNote(user.getNote());
+								tt.setGender(user.getGender());
+								tt.setAge(user.getAge());
+								clientInfoList.add(tt);
 							}
+							
+							for(Iterator<String> ite = clientOut.keySet().iterator();ite.hasNext();) {
+
+								String nn = ite.next();
+								ObjectOutputStream TMPOOS = clientOut.get(nn);
+								TMPOOS.writeObject(clientInfoList);TMPOOS.flush();							}
 						}
 						
 					} catch (EOFException e) {
@@ -294,7 +518,6 @@ public class ServerHandler implements Runnable {
 		System.err.println(curClient + " exit");
 		curClientIndex.remove(curClient);
 		clientSockets.remove(curClient);
-		certificateList.remove(curClient);
 		clientOut.remove(curClient);
 		clientIn.remove(curClient);
 		SystemMsgForNotify broadcast = new SystemMsgForNotify();
