@@ -75,6 +75,10 @@ public class GroupChatFunc {
 		}
 	}
 	
+	private void transferLogout() {
+		
+	}
+	
 	private List<String> getToList(String groupName) {
 		List<String> toList = new ArrayList<String>();
 		GroupDao gdao = new GroupDao();
@@ -99,4 +103,8 @@ public class GroupChatFunc {
 		return res;
 	}
 	
+	public static void main(String[] args) {
+		String a = "name[Group]";
+		System.err.println(a.split("\\[")[1]);
+	}
 }
