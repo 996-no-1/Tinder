@@ -1,5 +1,6 @@
 ﻿package ClientGUI;
 
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -301,11 +302,39 @@ public class ChatApplication {
 								}
 
 								systemMsgForCertificate = null;
-								//todo
+								// 之后进入聊天界面
+								// 加载用户聊天记录
+								BufferedReader bufferedReader;
+								try {
+
+									File file = new File(path + "/" + receiver + ".txt");
+									if (!file.exists())
+										file.createNewFile();
+									bufferedReader = new BufferedReader(new FileReader(file));
+									String msg = "";
+									String cur = "";
+									while ((cur = bufferedReader.readLine()) != null) {
+										msg += cur + "\n";
+									}
+									bufferedReader.close();
+									chatRoomUIMap.get(receiver).setMsgArea(msg);
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
 
 							}
 							envelope = null;
-						} 
+						} else if (envelope.getSourceName().equals("PrivacyInfoUI")) {
+							List<Object> objects = envelope.getMsg();
+							ClientInfo user = (ClientInfo) objects.get(0);
+							try {
+								oos.writeObject(user);
+								oos.flush();
+								envelope = null;
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
 
 					}
 					// clear envelope box
