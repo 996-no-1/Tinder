@@ -363,8 +363,22 @@ public class ClientHomeUI {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				if (displayCardUI!=null) {
+					displayCardUI.frame.dispose();
+				displayCardUI=null;
+				}
+				if (e.isMetaDown()&&!jTree.isSelectionEmpty()) {
+					DefaultMutableTreeNode cur = (DefaultMutableTreeNode) jTree.getLastSelectedPathComponent();
+						displayCardUI=new DisplayCardUI();
+						displayCardUI.setLocation(jTree);
+						ClientInfo clientInfo=clientInfoMap.get(cur.toString());
+						String status="online";
+						if (!curclientList.contains(cur.toString())) {
+							status="offline";
+						}
+						displayCardUI.setContent(clientInfo.getUsername(), String.valueOf(clientInfo.getAge()), clientInfo.getGender(), clientInfo.getNote(), status);
+				}
 				else if(e.getClickCount() == 2) {
-					System.out.println("hhh");
 					if (newMsgList.containsKey(cur.toString())) {
 						refreshMsgList(cur.toString(), 1);
 						newMsgList.remove(cur.toString());
@@ -396,7 +410,6 @@ public class ClientHomeUI {
 					List<Object> objects = new ArrayList<>();
 					objects.add(cur.toString());
 					envelope.setMsg(objects);
-					System.err.out("hhh");
 					chatApplication.setEnvelope(envelope);
 				}
 			}
@@ -425,6 +438,29 @@ public class ClientHomeUI {
 					chatApplication.privacyInfoUI.setNextMove(frmTinderClient);
 					frmTinderClient.setVisible(false);
 					chatApplication.privacyInfoUI.frmTinderPrivacy.setVisible(true);
+				}
+			}
+		});
+	}
+	public void addFrameListener(JFrame frame) {
+		frame.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+			@Override
+			public void mousePressed(MouseEvent e) {	
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {	
+			}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (displayCardUI!=null) {
+					displayCardUI.frame.dispose();
+					displayCardUI=null;
 				}
 			}
 		});
