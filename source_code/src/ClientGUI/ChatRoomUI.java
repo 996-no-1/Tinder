@@ -409,10 +409,57 @@ public class ChatRoomUI {
 					chatApplication.setEnvelope(envelope);
 					msgField.setText("");
 					refreshMsgArea(msg + " ", chatApplication.username);
+				} else if (object.equals(openFolderBtn)) {
+					File file = new File(chatApplication.path);
+					try {
+						Desktop.getDesktop().open(file);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 				}
+
 			}
 		});
 
+	}
+
+	/**
+	 * 设置面板的点击事件
+	 * 
+	 * @param jFrame
+	 */
+	public void addListener(JFrame jFrame) {
+		jFrame.addWindowListener(new WindowListener() {
+
+			@Override
+			public void windowOpened(WindowEvent e) {
+			}
+
+			@Override
+			public void windowIconified(WindowEvent e) {
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				chatApplication.chatRoomUIMap.remove(reveiverLable.getText());
+			}
+
+			@Override
+			public void windowClosed(WindowEvent e) {
+			}
+
+			@Override
+			public void windowActivated(WindowEvent e) {
+			}
+		});
 	}
 
 	/**
@@ -484,8 +531,83 @@ public class ChatRoomUI {
 						fileListUI.frmFileList.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 					}
 				} else if (object.equals(recordlblL)) {
+					// 判断是否能够发送
+					if (!chatApplication.clientHomeUI.curclientList.contains(reveiverLable.getText())) {
+						chatApplication.infoPromptwindow.setLabel("Receiver has offline!");
+						chatApplication.infoPromptwindow.nextMove(frmTinderChat);
+						frmTinderChat.setVisible(false);
+						chatApplication.infoPromptwindow.frmWarning.setVisible(true);
+						return;
+					}
+					if (chatApplication.index == 1) {
+						chatApplication.infoPromptwindow.setLabel("You have been blocked,please contact with admin!");
+						chatApplication.infoPromptwindow.nextMove(frmTinderChat);
+						frmTinderChat.setVisible(false);
+						chatApplication.infoPromptwindow.frmWarning.setVisible(true);
+						return;
+					}
+					// 录音
+					recordPopwindow = new RecordPopUI();
+					recordPopwindow.setUndecorated(true);
+
+					recordPopwindow.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					recordPopwindow.setVisible(true);
+					recordPopwindow.nextmove(chatApplication.chatRoomUIMap.get(reveiverLable.getText()),
+							recordPopwindow, chatApplication);
+					recordPopwindow.setVisible(true);
+					recordPopwindow.setLocationRelativeTo(frmTinderChat);
+					frmTinderChat.setVisible(false);
 				}
 
+			}
+		});
+	}
+
+	/**
+	 * 
+	 * @param jFrame
+	 */
+	public void addJframeListener(JFrame jFrame) {
+		jFrame.addWindowListener(new WindowListener() {
+
+			@Override
+			public void windowOpened(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void windowIconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				fileListUI.frmFileList.dispose();
+				if (recordPopwindow != null && recordPopwindow.isVisible()) {
+					recordPopwindow.setVisible(false);
+				}
+			}
+
+			@Override
+			public void windowClosed(WindowEvent e) {
+			}
+
+			@Override
+			public void windowActivated(WindowEvent e) {
 			}
 		});
 	}
