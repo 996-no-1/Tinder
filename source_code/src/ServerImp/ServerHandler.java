@@ -89,40 +89,6 @@ public class ServerHandler implements Runnable {
 			while (true) {
 				Thread.sleep(100);
 				logReq = (ClientInfo) ois.readObject();
-				
-				if(logReq.getUsername().equals("Admin")) {
-					if(clientLog.get(logReq.getUsername()).equals(logReq.getMD5())) {
-						
-						SystemMsgForNotify failInfo = new SystemMsgForNotify();
-						String msg = "Welcome to the chat room!";
-						failInfo.setMsg(msg);
-						failInfo.setSender("Server");
-						oos.writeObject(failInfo);oos.flush();
-						
-						
-						List<String> groupNameList = new ArrayList<String>();
-						
-						GroupDao gdao = new GroupDao();
-						List<Group> groupList = gdao.getAllGroup();
-						for (Group group : groupList) {
-							groupNameList.add(group.getGroupname());
-						}
-						
-						oos.writeObject(groupNameList);oos.flush();
-						
-						
-						List<String> userNameList = new ArrayList<String>();
-						
-						for(Iterator<String> ite = clientLog.keySet().iterator();ite.hasNext();) {
-							String tmp = ite.next();
-							if(tmp != "Admin") userNameList.add(tmp);
-						}
-						
-						oos.writeObject(userNameList);oos.flush();
-						
-						
-						break;
-					}else {
 						SystemMsgForNotify failInfo = new SystemMsgForNotify();
 						String msg = "please check your password!";
 						failInfo.setMsg(msg);
@@ -132,7 +98,6 @@ public class ServerHandler implements Runnable {
 						System.err.println("Wrong password!");
 						
 						continue;
-					}
 				}
 				
 				if (clientLog.containsKey(logReq.getUsrname())) {
@@ -169,74 +134,7 @@ public class ServerHandler implements Runnable {
 				oos.writeObject(failInfo);
 				oos.flush();
 			}
-			if(!logReq.getUsername().equals("Admin")) {
-				//receive client's certificate
-				Certificate certificate = (Certificate) ois.readObject();
-				
-				System.err.println("certificateE: " + certificate.getRSAE() + " certificateN: " + certificate.getRSAN());
-				
-				
-				certificateList.put(curClient, certificate);
-				clientAsMode=certificate.getAsMode();
-				// Broadcast client list and send online notice to every client
-				SystemMsgForNotify broadcast = new SystemMsgForNotify();
-				broadcast.setReceiver("everyone");
-				broadcast.setSender("server");
-				broadcast.setType(1);
-				broadcast.setMsg(new CaesarAlgorithm("10").encryptMsg("Client " + curClient + " is online!"));
-				List<String> list=new ArrayList<>();
-				for (String string : curClientIndex.keySet()) {
-					list.add(string);
-				}
-				for (ObjectOutputStream boradcastout : clientOut.values()) {
-					
-					//Transfer online clients list
-					boradcastout.writeObject(list);
-					boradcastout.flush();
-					
-					//Transfer all group and their member list
-					GroupDao gdao = new GroupDao();
-					List<Group> groupList = gdao.getAllGroup();
-					List<List<String>> groupMemberList = new ArrayList<List<String>>();
-					
-					UserDao udao = new UserDao();
-					List<String> notInGroupMembers = udao.getNotInGroupUserList();
-					notInGroupMembers.add(0, "Default");
-					groupMemberList.add(notInGroupMembers);
-					
-					for (Group group : groupList) {
-						List<String> tmp = new ArrayList<String>();
-						tmp.add(group.getGroupname());
-						for (String tmpUsername : group.getMemberUsernameList()) {
-							tmp.add(tmpUsername);
-						}
-						groupMemberList.add(tmp);
-					}
-					boradcastout.writeObject(groupMemberList);
-					boradcastout.flush();
-					
-					//Transfer user information
-					List<ClientInfo> clientInfoList = new ArrayList<>();
-					List<User> ul = udao.getAllUser();
-					
-					for (User user : ul) {
-						ClientInfo tmp = new ClientInfo();
-						tmp.setUsername(user.getUsername());
-						tmp.setNote(user.getNote());
-						tmp.setGender(user.getGender());
-						tmp.setAge(user.getAge());
-						clientInfoList.add(tmp);
-					}
-					boradcastout.writeObject(clientInfoList);
-					boradcastout.flush();
-					
-					//Transfer clientInfo list
-					
-					boradcastout.writeObject(broadcast);
-					boradcastout.flush();
-					boradcastout=null;
-				}
-			}
+			
 			
 			/**
 			 * New thread to handle the constant receiving from client.
@@ -285,41 +183,6 @@ public class ServerHandler implements Runnable {
 									}
 									oos.writeObject(allUserNameList);oos.flush();
 									
-								}else if(revMsg.getMsg().toString().startsWith("GroupAdd")) {
-									String[] params = revMsg.getMsg().toString().split("\\.\\.");
-									if(params.length > 1) {
-										
-										//Add new group
-										String groupName = params[1];
-										ArrayList<String> groupUserList = new ArrayList<String>();
-										for(int i = 2;i < params.length;i++) {
-											groupUserList.add(params[i]);
-										}
-										
-										GroupDao gdao = new GroupDao();
-										Boolean suc = gdao.createGroup(groupName);
-										gdao.addUserToGroup(groupName, groupUserList);
-										
-										//Instructions of success or fail for adding new group
-										if(suc) {
-											Message msg = new Message();
-											msg.setReceiver("Admin");
-											msg.setSender("Server");
-											msg.setMsg("New Group Add Success");
-											oos.writeObject(msg);oos.flush();
-											
-											List<Group> groupList = gdao.getAllGroup();
-											List<String> groupNameList = new ArrayList<String>();
-											
-											for (Group group : groupList) {
-												groupNameList.add(group.getGroupname());
-											}
-											
-											oos.writeObject(groupNameList);oos.flush();
-										}else {
-											
-										}
-									}
 								}else if(revMsg.getMsg().toString().startsWith("BeginModifyGroup")) {
 									
 									List<String> userNeedRefresh = new ArrayList<>();
@@ -431,6 +294,41 @@ public class ServerHandler implements Runnable {
 											break;
 										}
 									}
+								}else if(revMsg.getMsg().toString().startsWith("GroupAdd")) {
+									String[] params = revMsg.getMsg().toString().split("\\.\\.");
+									if(params.length > 1) {
+										
+										//Add new group
+										String groupName = params[1];
+										ArrayList<String> groupUserList = new ArrayList<String>();
+										for(int i = 2;i < params.length;i++) {
+											groupUserList.add(params[i]);
+										}
+										
+										GroupDao gdao = new GroupDao();
+										Boolean suc = gdao.createGroup(groupName);
+										gdao.addUserToGroup(groupName, groupUserList);
+										
+										//Instructions of success or fail for adding new group
+										if(suc) {
+											Message msg = new Message();
+											msg.setReceiver("Admin");
+											msg.setSender("Server");
+											msg.setMsg("New Group Add Success");
+											oos.writeObject(msg);oos.flush();
+											
+											List<Group> groupList = gdao.getAllGroup();
+											List<String> groupNameList = new ArrayList<String>();
+											
+											for (Group group : groupList) {
+												groupNameList.add(group.getGroupname());
+											}
+											
+											oos.writeObject(groupNameList);oos.flush();
+										}else {
+											
+										}
+									}
 								}
 							}else {
 								String[] pl = revMsg.getReceiver().split("\\[");
@@ -450,6 +348,15 @@ public class ServerHandler implements Runnable {
 								}else {
 									
 								}
+							}
+						}else if(object instanceof FileSend) {
+							FileSend sfs = (FileSend) object;
+							if(sfs.getTo().split("\\[").length > 1 && sfs.getTo().split("\\[")[1].equals("group]")) {
+								GroupChatFunc gcf = new GroupChatFunc(clientOut);
+								gcf.processGroupChat(sfs,1);
+							}else {
+								String receive = sfs.getTo();
+								clientOut.get(receive).writeObject(sfs);clientOut.get(receive).flush();
 							}
 						}else if(object instanceof ClientInfo) {
 							ClientInfo tmp = (ClientInfo) object;
@@ -491,8 +398,6 @@ public class ServerHandler implements Runnable {
 					ois.close();
 					oos.close();
 					socket.close();
-					offlineNotify();
-					System.err.println("clinet logout");
 					return;
 				} 
 				catch (IOException e) {

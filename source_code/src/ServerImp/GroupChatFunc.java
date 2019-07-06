@@ -67,8 +67,12 @@ public class GroupChatFunc {
 		
 	}
 	
-	private void transferLogout() {
+	private void transferFile(String fromName,FileSend fs,List<String> toList) throws IOException{
 		
+		for (String ite : toList) {
+			if(ite.equals(fromName)) continue;
+			oos.get(ite).writeObject(fs);oos.get(ite).flush();
+		}
 	}
 	
 	private List<String> getToList(String groupName) {
