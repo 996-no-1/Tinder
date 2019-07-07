@@ -1,6 +1,9 @@
 ﻿package ClientGUI;
 
-
+import java.awt.EventQueue;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -11,10 +14,6 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.awt.EventQueue;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.EOFException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.net.ServerSocket;
@@ -198,6 +197,30 @@ public class ChatApplication {
 									digitalSignature.setN(rsa.getN());
 									fileSend.setSignature(digitalSignature.getSignature(md5));
 									fileSend.setTime(new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
+									try {
+										// send file
+										oos.writeObject(fileSend);
+										oos.flush();
+										systemMsgForCertificate = null;
+										envelope = null;
+
+										// 写入本地聊天文件
+										File file = new File(path + "/" + fileSend.getTo() + ".txt");
+										PrintWriter pw;
+										try {
+											pw = new PrintWriter(new FileWriter(file, true));
+											pw.println(new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date())
+													+ "\n" + fileSend.getFrom() + " : " + "send a file "
+													+ fileSend.getFilename());
+											pw.close();
+										} catch (IOException e2) {
+											e2.printStackTrace();
+										}
+
+									} catch (Exception e1) {
+										envelope = null;
+										continue;
+									}
 								}
 							} else if (objects.size() == 3) {
 								Message message = new Message();
@@ -525,6 +548,7 @@ public class ChatApplication {
 								systemMsgForCertificate = null;
 								continue;
 							}
+							System.err.println("got a private message");
 							BigInteger E = null;
 							BigInteger N = null;
 							// request for certificate
@@ -670,6 +694,7 @@ public class ChatApplication {
 			// set the mode of the client
 			certificate.setAsMode(AsMode);
 		}
+		// generate local rsa public and private key
 		rsa = new RSA();
 		rsa.getRSAKey();
 		certificate.setRSAE(rsa.getE());
