@@ -9,7 +9,6 @@
 │   │   └── 开发进度日报 // 每天的进度日报
 │   └── Process // 技术类文档
 │       ├── 1-项目计划研究阶段
-│       │   ├── NPUSS-Tinder-DEC-1.0(E) 开发环境配置.docx
 │       │   ├── NPUSS-Tinder-DNR-1.0(E) 文档编号规则.docx
 │       │   ├── NPUSS-Tinder-PPR-0.1 项目进度报告.docx
 │       │   ├── NPUSS-Tinder-SCMP-1.0(E) 软件配置管理计划.docx

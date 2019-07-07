@@ -1,0 +1,251 @@
+文件引用：
+
+GBT 8567-2006 计算机软件文档编制规范：
+	无
+
+******
+
+NPUSS-Tinder-DNR-1.0(E) 文档编号规则.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+
+NPUSS-Tinder-SDS-1.0(E) 软件文档规范.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+
+NPUSS-Tinder-SDP-1.0(E) 软件开发计划.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+
+NPUSS-Tinder-SCMP-1.0(E) 软件配置管理计划.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+
+NPUSS-Tinder-STD-1.0(E) 软件测试说明.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+
+NPUSS-Tinder-PPR-0.1 项目进度报告.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	《NPUSS-Tinder-SDP-1.0(E) 软件开发计划》，Tinder项目组提供
+	《NPUSS-Tinder-SCMP-1.0(E) 软件配置管理计划》，Tinder项目组提供
+	《NPUSS-Tinder-STD-1.0(E) 软件测试说明》，Tinder项目组提供
+
+******
+
+NPUSS-Tinder-SRS-1.0(E) 软件需求规格说明书.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	
+NPUSS-Tinder-PPR-0.2 项目进度报告.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	《NPUSS-Tinder-SRS-1.0(E) 软件需求规格说明书》，Tinder项目组提供
+
+******
+
+NPUSS-Tinder-SFT-0.1 软件功能列表.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	《NPUSS-Tinder-SRS-1.0(E) 软件需求规格说明书》，Tinder项目组提供
+
+NPUSS-Tinder-DBDD-0.1 数据库(顶层)设计说明.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	《NPUSS-Tinder-SRS-1.0(E) 软件需求规格说明书》，Tinder项目组提供
+	《NPUSS-Tinder-SFT-0.1 软件功能列表》，Tinder项目组提供
+
+NPUSS-Tinder-SDD-0.1 软件(结构)设计说明.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	《NPUSS-Tinder-SRS-1.0(E) 软件需求规格说明书》，Tinder项目组提供
+	《NPUSS-Tinder-SFT-0.1 软件功能列表》，Tinder项目组提供
+	《NPUSS-Tinder-DBDD-0.1 数据库(顶层)设计说明》，Tinder项目组提供
+
+NPUSS-Tinder-STR-0.1 软件测试报告.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	《NPUSS-Tinder-STD-1.0(E) 软件测试说明》，Tinder项目组提供
+	《NPUSS-Tinder-SFT-0.1 软件功能列表》，Tinder项目组提供
+
+NPUSS-Tinder-SVD-0.1 软件版本说明.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	《NPUSS-Tinder-SRS-1.0(E) 软件需求规格说明书》，Tinder项目组提供
+	《NPUSS-Tinder-SFT-0.1 软件功能列表》，Tinder项目组提供
+	《NPUSS-Tinder-DBDD-0.1 数据库(顶层)设计说明》，Tinder项目组提供
+	《NPUSS-Tinder-SDD-0.1 软件(结构)设计说明》，Tinder项目组提供
+	《NPUSS-Tinder-STR-0.1 软件测试报告》，Tinder项目组提供
+
+NPUSS-Tinder-PPR-0.3 项目进度报告.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	《NPUSS-Tinder-SFT-0.1 软件功能列表》，Tinder项目组提供
+	《NPUSS-Tinder-DBDD-0.1 数据库(顶层)设计说明》，Tinder项目组提供
+	《NPUSS-Tinder-SDD-0.1 软件(结构)设计说明》，Tinder项目组提供
+	《NPUSS-Tinder-STR-0.1 软件测试报告》，Tinder项目组提供
+	《NPUSS-Tinder-SVD-0.1 软件版本说明》，Tinder项目组提供
+
+******
+
+NPUSS-Tinder-SFT-0.2 软件功能列表.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	《NPUSS-Tinder-SRS-1.0(E) 软件需求规格说明书》，Tinder项目组提供
+	《NPUSS-Tinder-SFT-0.1 软件功能列表》，Tinder项目组提供
+
+NPUSS-Tinder-DBDD-0.2 数据库(顶层)设计说明.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	《NPUSS-Tinder-SRS-1.0(E) 软件需求规格说明书》，Tinder项目组提供
+	《NPUSS-Tinder-SFT-0.2 软件功能列表》，Tinder项目组提供
+	《NPUSS-Tinder-DBDD-0.1 数据库(顶层)设计说明》，Tinder项目组提供
+	
+NPUSS-Tinder-SDD-0.2 软件(结构)设计说明.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	《NPUSS-Tinder-SRS-1.0(E) 软件需求规格说明书》，Tinder项目组提供
+	《NPUSS-Tinder-SFT-0.2 软件功能列表》，Tinder项目组提供
+	《NPUSS-Tinder-DBDD-0.2 数据库(顶层)设计说明》，Tinder项目组提供
+	《NPUSS-Tinder-SDD-0.1 软件(结构)设计说明》，Tinder项目组提供
+
+NPUSS-Tinder-STR-0.2 软件测试报告.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	《NPUSS-Tinder-STD-1.0(E) 软件测试说明》，Tinder项目组提供
+	《NPUSS-Tinder-SFT-0.2 软件功能列表》，Tinder项目组提供
+	《NPUSS-Tinder-STR-0.1 软件测试报告》，Tinder项目组提供
+
+NPUSS-Tinder-SVD-0.2 软件版本说明.docx:
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	《NPUSS-Tinder-SRS-1.0(E) 软件需求规格说明书》，Tinder项目组提供
+	《NPUSS-Tinder-SFT-0.2 软件功能列表》，Tinder项目组提供
+	《NPUSS-Tinder-DBDD-0.2 数据库(顶层)设计说明》，Tinder项目组提供
+	《NPUSS-Tinder-SDD-0.2 软件(结构)设计说明》，Tinder项目组提供
+	《NPUSS-Tinder-STR-0.2 软件测试报告》，Tinder项目组提供
+
+NPUSS-Tinder-PPR-0.4 项目进度报告.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	《NPUSS-Tinder-SRS-1.0(E) 软件需求规格说明书》，Tinder项目组提供
+	《NPUSS-Tinder-SFT-0.2 软件功能列表》，Tinder项目组提供
+	《NPUSS-Tinder-DBDD-0.2 数据库(顶层)设计说明》，Tinder项目组提供
+	《NPUSS-Tinder-SDD-0.2 软件(结构)设计说明》，Tinder项目组提供
+	《NPUSS-Tinder-STR-0.2 软件测试报告》，Tinder项目组提供
+	《NPUSS-Tinder-SVD-0.2 软件版本说明》，Tinder项目组提供
+
+******
+
+NPUSS-Tinder-SFT-0.3 软件功能列表.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	《NPUSS-Tinder-SRS-1.0(E) 软件需求规格说明书》，Tinder项目组提供
+	《NPUSS-Tinder-SFT-0.2 软件功能列表》，Tinder项目组提供
+
+NPUSS-Tinder-DBDD-0.3 数据库(顶层)设计说明.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	《NPUSS-Tinder-SRS-1.0(E) 软件需求规格说明书》，Tinder项目组提供
+	《NPUSS-Tinder-SFT-0.3 软件功能列表》，Tinder项目组提供
+	《NPUSS-Tinder-DBDD-0.2 数据库(顶层)设计说明》，Tinder项目组提供
+	
+NPUSS-Tinder-SDD-0.3 软件(结构)设计说明.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	《NPUSS-Tinder-SRS-1.0(E) 软件需求规格说明书》，Tinder项目组提供
+	《NPUSS-Tinder-SFT-0.3 软件功能列表》，Tinder项目组提供
+	《NPUSS-Tinder-DBDD-0.3 数据库(顶层)设计说明》，Tinder项目组提供
+	《NPUSS-Tinder-SDD-0.2 软件(结构)设计说明》，Tinder项目组提供
+
+NPUSS-Tinder-STR-0.3 软件测试报告.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	《NPUSS-Tinder-STD-1.0(E) 软件测试说明》，Tinder项目组提供
+	《NPUSS-Tinder-SFT-0.3 软件功能列表》，Tinder项目组提供
+	《NPUSS-Tinder-STR-0.2 软件测试报告》，Tinder项目组提供
+
+NPUSS-Tinder-SVD-0.3 软件版本说明.docx:
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	《NPUSS-Tinder-SRS-1.0(E) 软件需求规格说明书》，Tinder项目组提供
+	《NPUSS-Tinder-SFT-0.3 软件功能列表》，Tinder项目组提供
+	《NPUSS-Tinder-DBDD-0.3 数据库(顶层)设计说明》，Tinder项目组提供
+	《NPUSS-Tinder-SDD-0.3 软件(结构)设计说明》，Tinder项目组提供
+	《NPUSS-Tinder-STR-0.3 软件测试报告》，Tinder项目组提供
+
+NPUSS-Tinder-PPR-0.5 项目进度报告.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	《NPUSS-Tinder-SRS-1.0(E) 软件需求规格说明书》，Tinder项目组提供
+	《NPUSS-Tinder-SFT-0.3 软件功能列表》，Tinder项目组提供
+	《NPUSS-Tinder-DBDD-0.3 数据库(顶层)设计说明》，Tinder项目组提供
+	《NPUSS-Tinder-SDD-0.3 软件(结构)设计说明》，Tinder项目组提供
+	《NPUSS-Tinder-STR-0.3 软件测试报告》，Tinder项目组提供
+	《NPUSS-Tinder-SVD-0.3 软件版本说明》，Tinder项目组提供
+
+******
+
+NPUSS-Tinder-SUM-1.0(E) 软件用户手册.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	《NPUSS-Tinder-SRS-1.0(E) 软件需求规格说明书》，Tinder项目组提供
+	《NPUSS-Tinder-SFT-0.3 软件功能列表》，Tinder项目组提供
+
+NPUSS-Tinder-PDSR-1.0(E) 项目开发总结报告.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	《NPUSS-Tinder-SDP-1.0(E) 软件开发计划》，Tinder项目组提供
+	《NPUSS-Tinder-SCMP-1.0(E) 软件配置管理计划》，Tinder项目组提供
+	《NPUSS-Tinder-STD-1.0(E) 软件测试说明》，Tinder项目组提供
+	《NPUSS-Tinder-SRS-1.0(E) 软件需求规格说明书》，Tinder项目组提供
+	《NPUSS-Tinder-SFT-0.1 软件功能列表》，Tinder项目组提供
+	《NPUSS-Tinder-DBDD-0.1 数据库(顶层)设计说明》，Tinder项目组提供
+	《NPUSS-Tinder-SDD-0.1 软件(结构)设计说明》，Tinder项目组提供
+	《NPUSS-Tinder-STR-0.1 软件测试报告》，Tinder项目组提供
+	《NPUSS-Tinder-SVD-0.1 软件版本说明》，Tinder项目组提供
+	《NPUSS-Tinder-SFT-0.2 软件功能列表》，Tinder项目组提供
+	《NPUSS-Tinder-DBDD-0.2 数据库(顶层)设计说明》，Tinder项目组提供
+	《NPUSS-Tinder-SDD-0.2 软件(结构)设计说明》，Tinder项目组提供
+	《NPUSS-Tinder-STR-0.2 软件测试报告》，Tinder项目组提供
+	《NPUSS-Tinder-SVD-0.2 软件版本说明》，Tinder项目组提供
+	《NPUSS-Tinder-SFT-0.3 软件功能列表》，Tinder项目组提供
+	《NPUSS-Tinder-DBDD-0.3 数据库(顶层)设计说明》，Tinder项目组提供
+	《NPUSS-Tinder-SDD-0.3 软件(结构)设计说明》，Tinder项目组提供
+	《NPUSS-Tinder-STR-0.3 软件测试报告》，Tinder项目组提供
+	《NPUSS-Tinder-SVD-0.3 软件版本说明》，Tinder项目组提供
+	《NPUSS-Tinder-SUM-1.0(E) 软件用户手册》，Tinder项目组提供
+	《NPUSS-Tinder-PPR-1.0(E) 项目进度报告》，Tinder项目组提供
+
+NPUSS-Tinder-PPR-1.0(E) 项目进度报告.docx：
+	《GBT 8567-2006 计算机软件文档编制规范》，国家标准
+	《NPUSS-Tinder-SDS-1.0(E) 软件文档规范》，Tinder项目组提供
+	《NPUSS-Tinder-DNR-1.0(E) 文档编号规则》，Tinder项目组提供
+	《NPUSS-Tinder-SUM-1.0(E) 软件用户手册》，Tinder项目组提供
+	《NPUSS-Tinder-PDSR-1.0(E) 项目开发总结报告》，Tinder项目组提供
+	
