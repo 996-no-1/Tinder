@@ -286,22 +286,6 @@ public class ClientHomeUI {
 
 	}
 
-
-
-/**
-	 * 设置用户名
-	 * 
-	 * @param username
-	 */
-	public void setUsername(String username) {
-		frmTinderClient.remove(usernameLable);
-		usernameLable = new JLabel(username);
-		usernameLable.setBounds(89, 16, 72, 18);
-		frmTinderClient.getContentPane().add(usernameLable);
-		frmTinderClient.validate();
-		frmTinderClient.repaint();
-	}
-
 	class NodeRenderer extends DefaultTreeCellRenderer {
 		private static final long serialVersionUID = -8012134487683561483L;
 
@@ -342,6 +326,19 @@ public class ClientHomeUI {
 		}
 	}
 
+	/**
+	 * 设置用户名
+	 * 
+	 * @param username
+	 */
+	public void setUsername(String username) {
+		frmTinderClient.remove(usernameLable);
+		usernameLable = new JLabel(username);
+		usernameLable.setBounds(89, 16, 72, 18);
+		frmTinderClient.getContentPane().add(usernameLable);
+		frmTinderClient.validate();
+		frmTinderClient.repaint();
+	}
 
 	public void addMouseListener(JTree jTree) {
 		jTree.addMouseListener(new MouseListener() {
@@ -369,6 +366,11 @@ public class ClientHomeUI {
 				}
 				if (e.isMetaDown()&&!jTree.isSelectionEmpty()) {
 					DefaultMutableTreeNode cur = (DefaultMutableTreeNode) jTree.getLastSelectedPathComponent();
+					if (cur==null||cur.toString().contains("group")|| cur.getChildCount() != 0
+							|| cur.toString().contains("New Message")
+							|| chatApplication.chatRoomUIMap.containsKey(cur.toString())) {
+						return;
+					}else {
 						displayCardUI=new DisplayCardUI();
 						displayCardUI.setLocation(jTree);
 						ClientInfo clientInfo=clientInfoMap.get(cur.toString());
@@ -377,8 +379,20 @@ public class ClientHomeUI {
 							status="offline";
 						}
 						displayCardUI.setContent(clientInfo.getUsername(), String.valueOf(clientInfo.getAge()), clientInfo.getGender(), clientInfo.getNote(), status);
+					}
 				}
 				else if(e.getClickCount() == 2) {
+					if (displayCardUI!=null) {
+						displayCardUI.frame.dispose();
+						displayCardUI=null;
+					}
+					DefaultMutableTreeNode cur = (DefaultMutableTreeNode) jTree.getLastSelectedPathComponent();
+					if (cur==null||cur.toString().equals(chatApplication.username) || cur.getChildCount() != 0
+							|| cur.toString().contains("New Message")
+							|| chatApplication.chatRoomUIMap.containsKey(cur.toString())
+							) {
+						return;
+					}
 					if (newMsgList.containsKey(cur.toString())) {
 						refreshMsgList(cur.toString(), 1);
 						newMsgList.remove(cur.toString());
