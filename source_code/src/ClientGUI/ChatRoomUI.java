@@ -256,11 +256,25 @@ public class ChatRoomUI {
 		msgExceededLength.setVisible(false);
 		frmTinderChat.getContentPane().add(msgExceededLength);
 
+		lblNewLabel = new JLabel("File List");
+		lblNewLabel.setBounds(516, 20, 72, 18);
+		frmTinderChat.getContentPane().add(lblNewLabel);
+
+		fileListLable = new JLabel("");
+		fileListLable.setToolTipText("Look through recent file");
+		fileListLable
+				.setIcon(new ImageIcon("F:\\eclipse-java-mars-2-win32-x86_64\\workspace\\Tinner\\image\\zhankai.png"));
 		fileListLable.setBounds(594, 13, 30, 25);
 		frmTinderChat.getContentPane().add(fileListLable);
 		addLableListener(fileListLable);
 
-		recordlblL = new JLabel("Record");	}
+		recordlblL = new JLabel("Record");
+		recordlblL.setIcon(new ImageIcon("F:\\eclipse-java-mars-2-win32-x86_64\\workspace\\Tinner\\image\\luyin.png"));
+		recordlblL.setBounds(185, 377, 72, 18);
+		frmTinderChat.getContentPane().add(recordlblL);
+		addJframeListener(frmTinderChat);
+		addLableListener(recordlblL);
+	}
 
 	/**
 	 * 设置单选按钮的点击事件，以切换功能选项
@@ -409,6 +423,36 @@ public class ChatRoomUI {
 					chatApplication.setEnvelope(envelope);
 					msgField.setText("");
 					refreshMsgArea(msg + " ", chatApplication.username);
+				} else if (object.equals(locationSend)) {
+					if (!chatApplication.clientHomeUI.curclientList.contains(reveiverLable.getText())) {
+						chatApplication.infoPromptwindow.setLabel("Receiver has offline!");
+						chatApplication.infoPromptwindow.nextMove(frmTinderChat);
+						frmTinderChat.setVisible(false);
+						chatApplication.infoPromptwindow.frmWarning.setVisible(true);
+						return;
+					}
+					String location = "My current location is ";
+					GetPlaceByIp getPlaceByIp = new GetPlaceByIp();
+					location += getPlaceByIp.getPosition();
+					GetLatAndLngByBaidu getLatAndLngByBaidu = new GetLatAndLngByBaidu();
+					try {
+						location += " " + getLatAndLngByBaidu.getPosition(location);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					// 加密
+					String key = chatApplication.username;
+					String msg = location;
+					Envelope envelope = new Envelope();
+					envelope.setSourceName("ChatRoomUI");
+					List<Object> objects = new ArrayList<>();
+					objects.add(reveiverLable.getText());
+					objects.add(msg);
+					objects.add(key);
+					envelope.setMsg(objects);
+					chatApplication.setEnvelope(envelope);
+					msgField.setText("");
+					refreshMsgArea(msg + " ", chatApplication.username);
 				} else if (object.equals(openFolderBtn)) {
 					File file = new File(chatApplication.path);
 					try {
@@ -458,6 +502,36 @@ public class ChatRoomUI {
 
 			@Override
 			public void windowActivated(WindowEvent e) {
+			}
+		});
+	}
+
+	/**
+	 * 添加对各个文本框的长度的检测。
+	 * 
+	 * @param jTextField
+	 */
+	public void addKeyListener(JTextField jTextField) {
+		jTextField.addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if (e.getSource().equals(msgField)) {
+					if (msgField.getText().length() >= 30) {
+						msgField.setText(msgField.getText().substring(0, 29));
+						msgExceededLength.setVisible(true);
+					} else {
+						msgExceededLength.setVisible(false);
+					}
+				}
+
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
 			}
 		});
 	}
