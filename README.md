@@ -6,7 +6,9 @@
 1. doc
 2. src
 
-doc文件夹具体涵盖内容请参考[Tinder项目文档简介](dev_doc/Management/文件结构.txt)  doc内文件间引用情况请参考[Tinder技术文档引用情况](dev_doc/Management/文件引用.txt)
+doc文件夹具体涵盖内容请参考[Tinder项目文档简介](dev_doc/Management/文件结构.txt)
+
+doc内文件间引用情况请参考[Tinder技术文档引用情况](dev_doc/Management/文件引用.txt)
 
 项目后期的注意事项请参考[后期修改内容](dev_doc/Management/注意事项.txt)
 
