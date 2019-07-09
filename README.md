@@ -21,4 +21,6 @@ doc内文件间引用情况请参考[Tinder技术文档引用情况](dev_doc/Man
 
 项目后期的注意事项请参考[后期修改内容](dev_doc/Management/注意事项.txt)
 
-今日分工：[07.08](dev_doc/Management/分工情况/分工情况--20190708.md)
+当前任务的[完成情况](dev_doc/Management/完成情况.txt)
+
+今日分工：[07.09](dev_doc/Management/分工情况/分工情况--20190709.txt)
