@@ -41,23 +41,8 @@ public class GetPlaceByIp {
 			return json;
 		} finally {
 			is.close();
+			// System.out.println("同时 从这里也能看出 即便return了，仍然会执行finally的！");
 		}
-	}
-
-	public String getPosition(){
-		String cur="";
-		String ip = getIP();
-		JSONObject json;
-		try {
-			json = readJsonFromUrl(
-					"http://api.map.baidu.com/location/ip?ak=F454f8a5efe5e577997931cc01de3974&ip="+ip);
-		
-		cur=((JSONObject) json.get("content")).get("address").toString();} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return cur;
 	}
 
 	private static String getIP() {
@@ -107,4 +92,31 @@ public class GetPlaceByIp {
 		return null;
 	}
 
+	public String getPosition(){
+		String cur="";
+		String ip = getIP();
+		JSONObject json;
+		try {
+			json = readJsonFromUrl(
+					"http://api.map.baidu.com/location/ip?ak=F454f8a5efe5e577997931cc01de3974&ip="+ip);
+		
+		cur=((JSONObject) json.get("content")).get("address").toString();} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return cur;
+	}
+	
+//	public static void main(String[] args) throws IOException, JSONException {
+//
+//		String ip = getIP();
+//
+//		// 这里调用百度的ip定位api服务 详见
+//		// http://api.map.baidu.com/lbsapi/cloud/ip-location-api.htm
+//		JSONObject json = readJsonFromUrl(
+//				"http://api.map.baidu.com/location/ip?ak=F454f8a5efe5e577997931cc01de3974&ip="+ip);
+////		System.out.println(json.toString());
+//		System.out.println(((JSONObject) json.get("content")).get("address"));
+//	}
 }
