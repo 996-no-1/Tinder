@@ -33,23 +33,7 @@ public class Recorder {
 		boolean bigEndian = false;
 		return new AudioFormat(sampleRate, sampleSizeInBits, channels, signed, bigEndian);
 	}
-	/**
-	 * Stop recording
-	 * 
-	 * @return status
-	 */
-	public boolean stop() {
-		boolean status = false;
-		if (!isRunning) {
-			// Not running, don't do anything
-		} else {
-			targetDataLine.stop();
-			targetDataLine.close();
-			isRunning = false;
-			status = true;
-		}
-		return status;
-	}
+
 	/**
 	 * Start recording
 	 * 
@@ -63,6 +47,24 @@ public class Recorder {
 		} else {
 			captureVoice(filePath);
 			isRunning = true;
+			status = true;
+		}
+		return status;
+	}
+
+	/**
+	 * Stop recording
+	 * 
+	 * @return status
+	 */
+	public boolean stop() {
+		boolean status = false;
+		if (!isRunning) {
+			// Not running, don't do anything
+		} else {
+			targetDataLine.stop();
+			targetDataLine.close();
+			isRunning = false;
 			status = true;
 		}
 		return status;
@@ -88,13 +90,13 @@ public class Recorder {
 
 	}
 	
-//	public static void main(String[] args) {
-//		Recorder recorder=new Recorder();
-//		recorder.start("./1.wav");
-//		Scanner scanner=new Scanner(System.in);
-//		if (scanner.nextLine().contains("s")) {
-//			recorder.stop();
-//		}
-//	}
-//
+	public static void main(String[] args) {
+		Recorder recorder=new Recorder();
+		recorder.start("./1.wav");
+		Scanner scanner=new Scanner(System.in);
+		if (scanner.nextLine().contains("s")) {
+			recorder.stop();
+		}
+	}
+
 }
