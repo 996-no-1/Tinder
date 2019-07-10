@@ -25,15 +25,15 @@ NPUSS-Tinder-SRS-1.0(E) 软件需求规格说明书.docx：
 NPUSS-Tinder-DBDD-0.1 数据库(顶层)设计说明.docx：
 	超链接、未完成评审
 NPUSS-Tinder-SDD-0.1 软件(结构)设计说明.docx：
-	未知、未完成评审
+	超链接、未完成评审
 NPUSS-Tinder-SFT-0.1 软件功能列表.docx：
 	超链接、未完成评审
 NPUSS-Tinder-STR-0.1 软件测试报告.docx：
 	未知、未完成评审
 NPUSS-Tinder-PPR-0.3 项目进度报告.docx：
-	未知、未完成评审
+	超链接、未完成评审
 NPUSS-Tinder-SVD-0.1 软件版本说明.docx：
-	超链接、2.3软件内容清单、2.5安装方法、未完成评审
+	超链接、未完成评审
 SprintBacklogs-0.1.xlsx：
 	完成！
 
@@ -42,30 +42,30 @@ SprintBacklogs-0.1.xlsx：
 NPUSS-Tinder-DBDD-0.2 数据库(顶层)设计说明.docx：
 	超链接、未完成评审
 NPUSS-Tinder-SDD-0.2 软件(结构)设计说明.docx：
-	未知、未完成评审
+	超链接、未完成评审
 NPUSS-Tinder-SFT-0.2 软件功能列表.docx：
 	超链接、未完成评审
 NPUSS-Tinder-STR-0.2 软件测试报告.docx：
 	未知、未完成评审
 NPUSS-Tinder-PPR-0.4 项目进度报告.docx：
-	未知、未完成评审
+	超链接、未完成评审
 NPUSS-Tinder-SVD-0.2 软件版本说明.docx：
-	未知、未完成评审
+	超链接、未完成评审
 SprintBacklogs-0.2.xlsx：
 	完成！
 
 ******
 
 NPUSS-Tinder-DBDD-0.3 数据库(顶层)设计说明.docx：
-	未知、未完成评审
+	超链接、未完成评审
 NPUSS-Tinder-SDD-0.3 软件(结构)设计说明.docx：
 	未知、未完成评审
 NPUSS-Tinder-SFT-0.3 软件功能列表.docx：
-	未知、未完成评审
+	超链接、未完成评审
 NPUSS-Tinder-STR-0.3 软件测试报告.docx：
 	未知、未完成评审
 NPUSS-Tinder-PPR-0.5 项目进度报告.docx：
-	未知、未完成评审
+	超链接、未完成评审
 NPUSS-Tinder-SVD-0.3 软件版本说明.docx：
 	未知、未完成评审
 SprintBacklogs-0.3.xlsx：
@@ -78,7 +78,7 @@ ProductBacklogs.xlsx：
 NPUSS-Tinder-PDSR-1.0(E) 项目开发总结报告.docx：
 	未知、未完成评审
 NPUSS-Tinder-PPR-1.0(E) 项目进度报告.docx：
-	文件修改控制、前面的文档内容、5.2.1工时、5.4问题及建议、未完成评审
+	超链接、未完成评审
 NPUSS-Tinder-SUM-1.0(E) 软件用户手册.docx：
 	未知、未完成评审
 
@@ -86,17 +86,7 @@ NPUSS-Tinder-SUM-1.0(E) 软件用户手册.docx：
 
 管理类文档：
 
-开发进度日报-20190701：
-开发进度日报-20190702：
-开发进度日报-20190703：
-开发进度日报-20190704：
-开发进度日报-20190705：
-开发进度日报-20190706：
-开发进度日报-20190707：
-开发进度日报-20190708：
-开发进度日报-20190709：
-开发进度日报-20190710：
-开发进度日报-20190711：
-开发进度日报-20190712：
-
-会议纪要
+开发进度日报：
+	完成！
+会议纪要：
+	完成！
