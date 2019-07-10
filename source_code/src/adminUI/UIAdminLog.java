@@ -7,6 +7,8 @@ import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JPasswordField;
 import javax.swing.UIManager;
@@ -74,6 +76,9 @@ public class UIAdminLog {
 		frmAdminlog = new JFrame();
 		frmAdminlog.setResizable(false);
 		frmAdminlog.setTitle("Tinder Admin Log");
+		frmAdminlog.setBounds(100, 100, 450, 300);
+		frmAdminlog.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmAdminlog.getContentPane().setLayout(null);
 		
 		JLabel lblNewLabel = new JLabel("Admin");
 		lblNewLabel.setFont(lblNewLabel.getFont().deriveFont(lblNewLabel.getFont().getStyle() | Font.BOLD, lblNewLabel.getFont().getSize() + 2f));
@@ -92,10 +97,6 @@ public class UIAdminLog {
 		addActionListener(logInBtn);
 	}
 	
-	public void keyReleased(KeyEvent e) {
-                //do nothing
-                }
-
 	/**
 	 * Initialize the action listener of buttons
 	 * @param b
