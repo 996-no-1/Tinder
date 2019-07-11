@@ -23,7 +23,11 @@ import org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper;
 import ClientGUI.Envelope;
 
 import javax.swing.JButton;
-
+/**
+ * 管理员重设用户密码UI界面
+ * @author 胡品爵
+ * @version 1.0
+ */
 public class UIResetPwd {
 
 	JFrame frmTinderReset;
@@ -108,6 +112,12 @@ public class UIResetPwd {
 		addActionListener(SubmitBtn);
 		addLengthLimit(pwd);
 	}
+	
+	
+	/**
+	 * Initialize the action listener of buttons
+	 * @param bt
+	 */
 	private void addActionListener(JButton bt) {
 		bt.addActionListener(new ActionListener() {
 			
@@ -132,6 +142,10 @@ public class UIResetPwd {
 		});
 	}
 	
+	/**
+	 * Initialize length limitation of text field
+	 * @param component
+	 */
 	public void addLengthLimit(JTextComponent component) {
         component.addKeyListener(new KeyListener() {
             @Override

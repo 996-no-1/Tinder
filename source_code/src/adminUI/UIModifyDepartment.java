@@ -22,7 +22,11 @@ import javax.swing.JCheckBox;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
-
+/**
+ * 修改群组内成员组成UI界面
+ * @author 胡品爵
+ * @version 1.0
+ */
 public class UIModifyDepartment {
 
 	JFrame frmTinderModify;
@@ -142,6 +146,10 @@ public class UIModifyDepartment {
 		
 	}
 	
+	/**
+	 * Initialize the action listener of buttons
+	 * @param b
+	 */
 	private void addActionListener(JButton bt) {
 		bt.addActionListener(new ActionListener() {
 
@@ -205,7 +213,11 @@ public class UIModifyDepartment {
 			
 		});
 	}
-	//insideMemberList
+	
+	/**
+	 * Refresh inside member list
+	 * @param insideMemberDataList	new 'insideMemberList'
+	 */
 	public void refreshInsideMemberList(List<String> insideMemberDataList) {
 		this.insideMemberDataList = insideMemberDataList;
 		
@@ -225,6 +237,10 @@ public class UIModifyDepartment {
 		frmTinderModify.repaint();
 	}
 	
+	/**
+	 * Refresh outside member list
+	 * @param extraMemberDataList	new 'extraMemberDataList'
+	 */
 	public void refreshExtraMemberList(List<String> extraMemberDataList) {
 		this.extraMemberDataList = extraMemberDataList;
 		

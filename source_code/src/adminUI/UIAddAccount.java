@@ -24,6 +24,9 @@ import ClientGUI.ChatApplication;
 import ClientGUI.Envelope;
 import SecurityAlgorithm.MD5;
 
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JPasswordField;
 /**
  * 添加用户的UI界面
  * @author 胡品爵
@@ -223,6 +226,34 @@ public class UIAddAccount {
             }
         });
 	}
+	
+	/**
+	 * Tool class for 'addLengthLimit' method
+	 * @author 15360
+	 *
+	 */
+	class TextFieldInputListener implements CaretListener {
+		 
+	    @Override
+	    public void caretUpdate(CaretEvent e) {
+	        JTextField textField = (JTextField) e.getSource();
+	        String text = textField.getText();
+	        if (text.length() == 0) {
+	            return;
+	        }
+	        char ch = text.charAt(text.length() - 1);
+	        if (ch == ' ') {
+	            adminApplication.infoPrompt.setLabel("You can not enter space.");
+	            adminApplication.infoPrompt.nextMove(frmTinderAdd);
+	            adminApplication.infoPrompt.frmWarning.setVisible(true);
+	            SwingUtilities.invokeLater(new Runnable() {
+	                @Override
+	                public void run() {
+	                    textField.setText(text.substring(0, text.length() - 1));
+	                }
+	            });
+	        }
+	    }
 	 
 	}
 	

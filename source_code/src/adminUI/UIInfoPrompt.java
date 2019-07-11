@@ -25,7 +25,7 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 /**
  * alert Ui
- * @author Wang Zhichao 2019/06/25
+ * @author ºúÆ·¾ô
  * @version 1.0
  */
 public class UIInfoPrompt extends JDialog {
