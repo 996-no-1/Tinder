@@ -1,5 +1,5 @@
 package ServerImp;
-
+  
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -36,16 +36,20 @@ public class GroupChatFunc {
 		
 	}
 	
-	public void processGroupChat(FileSend fs) throws IOException {
+	public void processGroupChat(FileSend fs,int type) throws IOException {
 		
-		String fromName = fs.getFrom(),groupName = fs.getTo().split("\\[")[0];
-		List<String> toList;
-		
-		if(fromName.equals("Admin")) {
+		if(type == 1){
+			String fromName = fs.getFrom(),groupName = fs.getTo().split("\\[")[0];
+			List<String> toList;
 			
-		}else {
-			toList = getToList(groupName);
-			transferFile(fromName,fs,toList);
+			if(fromName.equals("Admin")) {
+				
+			}else {
+				toList = getToList(groupName);
+				transferFile(fromName,fs,toList);
+			}
+		}else{
+			oos.get(fs.getTo()).writeObject(fs);oos.get(fs.getTo()).flush();
 		}
 		
 	}
