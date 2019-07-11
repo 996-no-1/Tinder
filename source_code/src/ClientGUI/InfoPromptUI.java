@@ -60,6 +60,7 @@ public class InfoPromptUI extends JDialog {
 	 */
 	private void initialize() {
 		frmWarning = new JFrame();
+		frmWarning.setResizable(false);
 		frmWarning.setTitle("Warning");
 		frmWarning.setType(Type.POPUP);
 		frmWarning.setBounds(100, 100, 446, 248);

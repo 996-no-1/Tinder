@@ -22,16 +22,11 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.ListModel;
-import javax.swing.ListSelectionModel;
-import javax.swing.UIManager;
-import javax.swing.text.JTextComponent;
-import javax.swing.JPanel;
-import java.awt.Color;
-import javax.swing.JCheckBox;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-
+/**
+ * 管理员的Home界面
+ * @author 胡品爵
+ * @version 1.0
+ */
 public class UIAdminHome {
 
 	JFrame frmTinderAdmin;
@@ -46,13 +41,6 @@ public class UIAdminHome {
 	private JButton blockAccountBtn;
 	private JButton deleteAccountBtn;
 	private JButton btnAddAccount;
-	private JButton resetPasswordBtn;
-	private ButtonGroup buttonGroup;
-	private JButton unlockAccountBtn;
-	
-	private AdminApplication adminApplication;
-	private JList<String> list;
-	private List<String> onlineUserList;
 	
 	List<String> userList;
 	List<String> groupList;
@@ -62,6 +50,11 @@ public class UIAdminHome {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		clientRadio = new JRadioButton("Client");
+		clientRadio.setSelected(true);
+		clientRadio.setBounds(105, 372, 77, 27);
+		frmTinderAdmin.getContentPane().add(clientRadio);
+
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -137,11 +130,6 @@ public class UIAdminHome {
 		deleteDepartmentBtn = new JButton("Delete");
 		deleteDepartmentBtn.setBounds(259, 445, 156, 27);
 		frmTinderAdmin.getContentPane().add(deleteDepartmentBtn);
-		
-		clientRadio = new JRadioButton("Client");
-		clientRadio.setSelected(true);
-		clientRadio.setBounds(105, 372, 77, 27);
-		frmTinderAdmin.getContentPane().add(clientRadio);
 		
 		departmentRadio = new JRadioButton("Department");
 		departmentRadio.setBounds(259, 372, 110, 27);
@@ -227,13 +215,6 @@ public class UIAdminHome {
 					//TODO 不知道数据类型实现方式
 					btnAddAccount.setEnabled(true);
 					btnAddAccount.setVisible(true);
-					deleteAccountBtn.setEnabled(true);
-					deleteAccountBtn.setVisible(true);
-					blockAccountBtn.setEnabled(true);
-					blockAccountBtn.setVisible(true);
-					unlockAccountBtn.setEnabled(true);
-					unlockAccountBtn.setVisible(true);
-					resetPasswordBtn.setEnabled(true);
 					resetPasswordBtn.setVisible(true);
 					
 					deleteDepartmentBtn.setEnabled(false);
@@ -256,10 +237,6 @@ public class UIAdminHome {
 //					refreshBox(clientList);
 					btnAddAccount.setEnabled(false);
 					btnAddAccount.setVisible(false);
-					deleteAccountBtn.setEnabled(false);
-					deleteAccountBtn.setVisible(false);
-					blockAccountBtn.setEnabled(false);
-					blockAccountBtn.setVisible(false);
 					unlockAccountBtn.setEnabled(false);
 					unlockAccountBtn.setVisible(false);
 					resetPasswordBtn.setEnabled(false);
@@ -273,6 +250,7 @@ public class UIAdminHome {
 					ModifyDepartmentBtn.setVisible(true);
 					addActionListener(deleteDepartmentBtn);
 					addActionListener(addDepartmentBtn);
+
 					addActionListener(ModifyDepartmentBtn);
 					
 					refreshViewList(groupList,0);
@@ -281,6 +259,10 @@ public class UIAdminHome {
 		});
 	}
 	
+	/**
+	 * Initialize the action listener of buttons
+	 * @param b
+	 */
 	private void addActionListener(JButton bt) {
 		bt.addActionListener(new ActionListener() {
 			
@@ -328,7 +310,13 @@ public class UIAdminHome {
 						}
 					}
 				}else if(arg0.getSource().equals(blockAccountBtn)) {
-					
+					deleteAccountBtn.setEnabled(true);
+					deleteAccountBtn.setVisible(true);
+					blockAccountBtn.setEnabled(true);
+					blockAccountBtn.setVisible(true);
+					unlockAccountBtn.setEnabled(true);
+					unlockAccountBtn.setVisible(true);
+					resetPasswordBtn.setEnabled(true);
 					if(list.getSelectedValuesList().size()==0) {
 						adminApplication.infoPrompt.nextMove(frmTinderAdmin);
 						adminApplication.infoPrompt.setLabel("You have not choose any user!");
@@ -356,8 +344,7 @@ public class UIAdminHome {
 						Envelope envelope=new Envelope();
 						envelope.setSourceName("UIAdminHome");
 						String msg="Unlock_Account";
-						List<Object> emsg=new ArrayList<>();
-						emsg.add(msg);
+
 						for(String e:list.getSelectedValuesList()) {
 							emsg.add(processSelectedValue(e));
 						}
@@ -401,6 +388,10 @@ public class UIAdminHome {
 						String msg = "Begin Delete Department";
 						List<Object> emsg = new ArrayList<>();
 						emsg.add(msg);
+
+						List<Object> emsg=new ArrayList<>();
+						emsg.add(msg);
+
 						emsg.add(str);
 						envelope.setMsg(emsg);
 						adminApplication.setEnvelope(envelope);
@@ -441,15 +432,16 @@ public class UIAdminHome {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					frmTinderAdmin.setVisible(false);
-					adminApplication = null;
-					adminApplication = new AdminApplication();
-					adminApplication.start();
 				}
 			}
 		});
 	}
 	
+	/**
+	 * Modify display user list
+	 * @param name	add/remove name of user
+	 * @param instructionType	1:add/0:remove
+	 */
 	public void modeifyUserList(String name,int instructionType) {
 		if(instructionType == 1) {
 			userList.add(name);
@@ -458,6 +450,11 @@ public class UIAdminHome {
 		}
 	}
 	
+	/**
+	 * Modify display group list
+	 * @param name	add/remove name of group
+	 * @param instructionType	1:add/0:remove
+	 */
 	public void modeifyGroupList(String name,int instructionType) {
 		if(instructionType == 1) {
 			groupList.add(name);
@@ -466,6 +463,19 @@ public class UIAdminHome {
 		}
 	}
 	
+            @Override
+            public void keyTyped(KeyEvent e) {
+                String s = component.getText();
+                if(s.length() >= 7) {
+                    e.consume();
+                }
+            }
+
+	/**
+	 * Refresh display list
+	 * @param dataList	list you want to display
+	 * @param type	1:user/0:group
+	 */
 	public void refreshViewList(List<String> dataList,int type) {
 		
 		if(type == 1) {
@@ -510,11 +520,20 @@ public class UIAdminHome {
 		frmTinderAdmin.repaint();
 	}
 	
+	/**
+	 * Set online user list
+	 * @param onlineUserList	new online user list
+	 */
 	public void setOnlineUserList(List<String> onlineUserList) {
 		this.onlineUserList = onlineUserList;
 		System.err.println(onlineUserList.size());
 	}
 	
+	/**
+	 * Process selected value list
+	 * @param ini
+	 * @return
+	 */
 	private List<String> processSelectedValueList(List<Object> ini){
 		List<String> res = new ArrayList<>();
 		
@@ -526,10 +545,20 @@ public class UIAdminHome {
 		return res;
 	}
 	
+	/**
+	 * process selected value
+	 * @param ini
+	 * @return
+	 */
 	private String processSelectedValue(String ini) {
 		return ini.substring(9);
 	}
 	
+	/**
+	 * set log state
+	 * @param logUser	user name
+	 * @param type	1:online/0:offline
+	 */
 	public void setLogState(String logUser,int type) {
 		if(type == 1) {
 			onlineUserList.add(logUser);
@@ -540,6 +569,10 @@ public class UIAdminHome {
 		refreshViewList(userList,1);
 	}
 	
+	/**
+	 * Initialize length limitation of text field
+	 * @param component
+	 */
 	public static void addLengthLimit(JTextComponent component) {
         component.addKeyListener(new KeyListener() {
             @Override

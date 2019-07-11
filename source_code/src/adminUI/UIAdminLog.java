@@ -7,8 +7,6 @@ import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JPasswordField;
 import javax.swing.UIManager;
@@ -20,7 +18,11 @@ import ClientGUI.Envelope;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-
+/**
+ * 管理员登录UI界面
+ * @author 胡品爵
+ * @version 1.0
+ */
 public class UIAdminLog {
 
 	JFrame frmAdminlog;
@@ -72,9 +74,6 @@ public class UIAdminLog {
 		frmAdminlog = new JFrame();
 		frmAdminlog.setResizable(false);
 		frmAdminlog.setTitle("Tinder Admin Log");
-		frmAdminlog.setBounds(100, 100, 450, 300);
-		frmAdminlog.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frmAdminlog.getContentPane().setLayout(null);
 		
 		JLabel lblNewLabel = new JLabel("Admin");
 		lblNewLabel.setFont(lblNewLabel.getFont().deriveFont(lblNewLabel.getFont().getStyle() | Font.BOLD, lblNewLabel.getFont().getSize() + 2f));
@@ -90,13 +89,17 @@ public class UIAdminLog {
 		passwordField.setBounds(193, 115, 168, 31);
 		frmAdminlog.getContentPane().add(passwordField);
 		
-		logInBtn = new JButton("Log In");
-		logInBtn.setBounds(324, 222, 94, 18);
-		frmAdminlog.getContentPane().add(logInBtn);
-		
 		addActionListener(logInBtn);
 	}
 	
+	public void keyReleased(KeyEvent e) {
+                //do nothing
+                }
+
+	/**
+	 * Initialize the action listener of buttons
+	 * @param b
+	 */
 	private void addActionListener(JButton b) {
 		b.addActionListener(new ActionListener() {
 			

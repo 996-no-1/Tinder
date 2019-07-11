@@ -17,11 +17,6 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
-import javax.swing.text.JTextComponent;
 
 import org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper;
 
@@ -29,24 +24,39 @@ import ClientGUI.ChatApplication;
 import ClientGUI.Envelope;
 import SecurityAlgorithm.MD5;
 
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JPasswordField;
-
+/**
+ * 添加用户的UI界面
+ * @author 胡品爵
+ * @version 1.0
+ */
 public class UIAddAccount {
 
 	JFrame frmTinderAdd;
 	private JTextField textField;
 	private JPasswordField passwordField;
 	private JButton discardBtn;
-	private JButton submitBtn;
-	private JComboBox ageComboBox;
-	private JComboBox genderComboBox;
 	
 	private AdminApplication adminApplication;
 	/**
 	 * Launch the application.
 	 */
+
+	public void addLengthLimit(JTextComponent component) {
+    	    component.addKeyListener(new KeyListener() {
+     	       @Override
+     	       public void keyTyped(KeyEvent e) {
+      	          if(e.getSource().equals(textField)) {
+     	           	String s = component.getText();
+     	               if(s.length() >= 10) {
+       	                 e.consume();
+         	           }
+         	       }else if(e.getSource().equals(passwordField)) {
+          	      	String s = component.getText();
+          	          if(s.length() >= 20) {
+        	                e.consume();
+           	         }
+         	       }
+            }
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -84,12 +94,6 @@ public class UIAddAccount {
 			e.printStackTrace();
 		}
 		
-		frmTinderAdd = new JFrame();
-		frmTinderAdd.setResizable(false);
-		frmTinderAdd.setTitle("Tinder Add");
-		frmTinderAdd.setBounds(100, 100, 451, 492);
-		frmTinderAdd.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frmTinderAdd.getContentPane().setLayout(null);
 		
 		JLabel lblAddNewAccount = new JLabel("Add New Account");
 		lblAddNewAccount.setFont(lblAddNewAccount.getFont().deriveFont(lblAddNewAccount.getFont().getStyle() | Font.BOLD, lblAddNewAccount.getFont().getSize() + 2f));
@@ -107,11 +111,6 @@ public class UIAddAccount {
 		JLabel lblUsername = new JLabel("username");
 		lblUsername.setBounds(51, 62, 72, 18);
 		frmTinderAdd.getContentPane().add(lblUsername);
-		
-		JLabel lable1 = new JLabel("age");
-		lable1.setHorizontalAlignment(SwingConstants.CENTER);
-		lable1.setBounds(51, 130, 72, 18);
-		frmTinderAdd.getContentPane().add(lable1);
 		
 		JLabel lblGender = new JLabel("gender");
 		lblGender.setHorizontalAlignment(SwingConstants.CENTER);
@@ -149,6 +148,10 @@ public class UIAddAccount {
 		addLengthLimit(passwordField);
 	}
 	
+	/**
+	 * Initialize the action listener of buttons
+	 * @param b
+	 */
 	private void addActionListener(JButton b) {
 		b.addActionListener(new ActionListener() {
 			
@@ -203,22 +206,11 @@ public class UIAddAccount {
 		});
 	}
 	
-	public void addLengthLimit(JTextComponent component) {
-        component.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                if(e.getSource().equals(textField)) {
-                	String s = component.getText();
-                    if(s.length() >= 10) {
-                        e.consume();
-                    }
-                }else if(e.getSource().equals(passwordField)) {
-                	String s = component.getText();
-                    if(s.length() >= 20) {
-                        e.consume();
-                    }
-                }
-            }
+	/**
+	 * Initialize length limitation of text field
+	 * @param component
+	 */
+	
  
             @Override
             public void keyPressed(KeyEvent e) {
@@ -231,29 +223,6 @@ public class UIAddAccount {
             }
         });
 	}
-	
-	class TextFieldInputListener implements CaretListener {
-		 
-	    @Override
-	    public void caretUpdate(CaretEvent e) {
-	        JTextField textField = (JTextField) e.getSource();
-	        String text = textField.getText();
-	        if (text.length() == 0) {
-	            return;
-	        }
-	        char ch = text.charAt(text.length() - 1);
-	        if (ch == ' ') {
-	            adminApplication.infoPrompt.setLabel("You can not enter space.");
-	            adminApplication.infoPrompt.nextMove(frmTinderAdd);
-	            adminApplication.infoPrompt.frmWarning.setVisible(true);
-	            SwingUtilities.invokeLater(new Runnable() {
-	                @Override
-	                public void run() {
-	                    textField.setText(text.substring(0, text.length() - 1));
-	                }
-	            });
-	        }
-	    }
 	 
 	}
 	

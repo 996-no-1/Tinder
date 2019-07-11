@@ -15,10 +15,6 @@ import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
-import javax.swing.text.JTextComponent;
 
 import org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper;
 
@@ -28,11 +24,12 @@ import javax.swing.BoxLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * 添加群组的UI界面
+ * @author 胡品爵
+ * @version 1.0
+ */
 public class UIAddDepartment {
 
 	JFrame frmNewDepartment;
@@ -104,11 +101,6 @@ public class UIAddDepartment {
 		frmNewDepartment.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmNewDepartment.getContentPane().setLayout(null);
 		
-		panel = new JPanel();
-		panel.setBounds(0, 0, 354, 506);
-		frmNewDepartment.getContentPane().add(panel);
-		panel.setLayout(null);
-		
 		lblNewLabel_1 = new JLabel("Group Name");
 		lblNewLabel_1.setBounds(51, 71, 72, 18);
 		panel.add(lblNewLabel_1);
@@ -155,13 +147,14 @@ public class UIAddDepartment {
 		addLengthLimit(departmentName);
 	}
 	
+	/**
+	 * Initialize the action listener of buttons
+	 * @param b
+	 */
 	private void addActionListener(JButton addButton) {
 		addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(e.getSource().equals(cancelButton)) {
-					frmNewDepartment.setVisible(false);
-					adminApplication.adminHomeWindow.frmTinderAdmin.setVisible(true);
-				}else if(e.getSource().equals(submitButton)) {
+				if(e.getSource().equals(submitButton)) {
 					Envelope envelope = new Envelope();
 					envelope.setSourceName("UIAddDepartment");
 					String groupName = departmentName.getText().toString();
@@ -177,7 +170,15 @@ public class UIAddDepartment {
 			}
 		});
 	}
-	
+
+	public void keyReleased(KeyEvent e) {
+                //do nothing
+                }
+
+	/**
+	 * Refresh display list
+	 * @param userNameList
+	 */
 	@SuppressWarnings("unchecked")
 	public void refreshList(List<String> userNameList) {
 		if(list != null) {
@@ -196,6 +197,10 @@ public class UIAddDepartment {
 		frmNewDepartment.repaint();
 	}
 	
+	/**
+	 * Initialize length limitation of text field
+	 * @param component
+	 */
 	public void addLengthLimit(JTextComponent component) {
         component.addKeyListener(new KeyListener() {
             @Override
@@ -220,6 +225,11 @@ public class UIAddDepartment {
         });
 	}
 	
+	/**
+	 * Tool class for 'addLengthLimit' method
+	 * @author 15360
+	 *
+	 */
 	class TextFieldInputListener implements CaretListener {
 		 
 	    @Override
@@ -233,7 +243,6 @@ public class UIAddDepartment {
 	        if (ch == ' ') {
 	            adminApplication.infoPrompt.setLabel("You can not enter space.");
 	            adminApplication.infoPrompt.nextMove(frmNewDepartment);
-	            adminApplication.infoPrompt.frmWarning.setVisible(true);
 	            SwingUtilities.invokeLater(new Runnable() {
 	                @Override
 	                public void run() {
