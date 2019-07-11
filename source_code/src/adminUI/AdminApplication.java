@@ -11,9 +11,12 @@ import java.util.List;
 
 import Client.ClientInfo;
 import Client.Message;
-import Client.SystemMsgForNotify;
-import ClientGUI.Envelope;
-
+/**
+ * 管理员入口类，维护了管理员应用的入口
+ * 
+ * @author 胡品爵
+ * @version 1.0
+ */
 public class AdminApplication {
 	
 	static final int PORT = 2021;
@@ -27,10 +30,6 @@ public class AdminApplication {
 	UIAddDepartment addDepartmentWindow;
 	UIAdminHome adminHomeWindow;
 	UIAdminLog adminLogWindow;
-	UIModifyDepartment modifyDepartmentWindow;
-	UIResetPwd resetPwdWindow;
-	UIInfoPrompt infoPrompt;
-	
 	private Envelope envelope = null;
 	
 	private int revMsgFromServerState = 0;
@@ -43,10 +42,6 @@ public class AdminApplication {
 			addAccountWindow = new UIAddAccount(this);
 			addDepartmentWindow = new UIAddDepartment(this);
 			adminHomeWindow = new UIAdminHome(this);
-			adminLogWindow = new UIAdminLog(this);
-			modifyDepartmentWindow = new UIModifyDepartment(this);
-			resetPwdWindow = new UIResetPwd(this);
-			infoPrompt = new UIInfoPrompt();
 			
 			oos = new ObjectOutputStream(adminSocket.getOutputStream());
 			ois = new ObjectInputStream(adminSocket.getInputStream());
@@ -60,19 +55,35 @@ public class AdminApplication {
 		
 	}
 	
+	/**
+	 * Interface between Front-end Interface and Back-end Processing
+	 * @param envelope
+	 */
 	public void setEnvelope(Envelope envelope) {
 		this.envelope = envelope;
 	}
 	
+	/**
+	 * Entrance for administrator
+	 */
 	public void start() {
 		receiveMsgFromView();
 		EventQueue.invokeLater(new Runnable() {
+			
+			adminLogWindow = new UIAdminLog(this);
+			modifyDepartmentWindow = new UIModifyDepartment(this);
+			resetPwdWindow = new UIResetPwd(this);
+			infoPrompt = new UIInfoPrompt();
+
 			public void run() {
 				adminLogWindow.frmAdminlog.setVisible(true);
 			}
 		});
 	}
 	
+	/**
+	 * Handle envelope from Front-end interface
+	 */
 	private void receiveMsgFromView() {
 		new Thread(new Runnable() {
 			public void run() {
@@ -80,9 +91,7 @@ public class AdminApplication {
 					if(envelope != null) {
 						if(envelope.getSourceName().equals("UIAddAccount")) {
 							
-							Message mes = new Message();
-							mes.setSender("Admin");
-							mes.setReceiver("Server");
+							
 							String username = (String) envelope.getMsg().get(0);
 							String age = (String) envelope.getMsg().get(1);
 							String gender = (String) envelope.getMsg().get(2);
@@ -99,22 +108,9 @@ public class AdminApplication {
 							}
 							
 							
-							
-							
-							
-						}else if(envelope.getSourceName().equals("LOGOUTOUTOUT")) {
 							Message mes = new Message();
 							mes.setSender("Admin");
 							mes.setReceiver("Server");
-							mes.setMsg("LOGOUTOUTOUT");
-							try {
-								oos.writeObject(mes);
-								oos.flush();
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
 						
 						
 						else if(envelope.getSourceName().equals("UIAddDepartment")) {
@@ -128,9 +124,9 @@ public class AdminApplication {
 							}
 							sm.setMsg(a.toString());
 							
+
 							try {
-								oos.writeObject(sm);
-								oos.flush();
+								oos.writeObject(alog);oos.flush();
 							} catch (IOException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -168,24 +164,7 @@ public class AdminApplication {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
-							}else if(envelope.getMsg().get(0).equals("Block_Account")||
-									envelope.getMsg().get(0).equals("Delete_Account")||
-									envelope.getMsg().get(0).equals("Unlock_Account")) {
-								Message sm=new Message();
-								sm.setSender("Admin");
-								sm.setReceiver("Server");
-								StringBuffer sb=new StringBuffer();
-								for(Object a:envelope.getMsg()) {
-									sb.append((String)a);
-									sb.append(" ");
-								}
-								sm.setMsg(sb.toString());
-								try {
-									oos.writeObject(sm);
-									oos.flush();
-								} catch (IOException e) {
-									e.printStackTrace();
-								}
+
 							}
 							else if(envelope.getMsg().get(0).equals("ToResetPwdPage")) {
 								adminHomeWindow.frmTinderAdmin.setVisible(false);
@@ -207,19 +186,20 @@ public class AdminApplication {
 								}
 								
 							}
-						}else if(envelope.getSourceName().equals("UIAdminLog")) {
+						}else if(envelope.getSourceName().equals("UIAdminLog")) 
+							try {
+								oos.writeObject(sm);
+								oos.flush();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 							ClientInfo alog = new ClientInfo();
 							alog.setUsername("Admin");
 							alog.setMD5((String) envelope.getMsg().get(0));
 							
 							if(revMsgFromServerState == 0) receiveMsgFromServer();
 							
-							try {
-								oos.writeObject(alog);oos.flush();
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
 							
 						}else if(envelope.getSourceName().equals("UIModifyDepartment")) {
 							if(envelope.getMsg().get(0).toString().equals("Add")) {
@@ -262,22 +242,6 @@ public class AdminApplication {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
-							}else if(envelope.getMsg().get(0).toString().equals("Submit")) {
-								Message smsg = new Message();
-								smsg.setSender("Admin");
-								smsg.setReceiver("Server");
-								smsg.setMsg("Submit");
-								
-								try {
-									oos.writeObject(smsg);
-									oos.flush();
-								} catch (IOException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-								
-								modifyDepartmentWindow.frmTinderModify.setVisible(false);
-								adminHomeWindow.frmTinderAdmin.setVisible(true);
 							}
 						}else if(envelope.getSourceName().equals("UIResetPwd")) {
 							if(envelope.getMsg().get(0).equals("ResetPasswd")) {
@@ -315,6 +279,9 @@ public class AdminApplication {
 		}).start();
 	}
 	
+	/**
+	 * Handle object from server
+	 */
 	private void receiveMsgFromServer() {
 		
 		revMsgFromServerState = 1;
@@ -588,6 +555,24 @@ public class AdminApplication {
 							} catch (IOException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
+							}
+
+							if(envelope.getMsg().get(0).toString().equals("Submit")) {
+								Message smsg = new Message();
+								smsg.setSender("Admin");
+								smsg.setReceiver("Server");
+								smsg.setMsg("Submit");
+								
+								try {
+									oos.writeObject(smsg);
+									oos.flush();
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								
+								modifyDepartmentWindow.frmTinderModify.setVisible(false);
+								adminHomeWindow.frmTinderAdmin.setVisible(true);
 							}
 							
 							System.err.println("Get online user name list!");
