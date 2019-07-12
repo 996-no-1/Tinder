@@ -1,5 +1,10 @@
 package ServerTheardPool;
 
+import Client.Certificate;
+import ServerImp.ServerHandler;
+import db.dao.UserDao;
+import db.entity.User;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -14,10 +19,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import Client.Certificate;
-import ServerImp.ServerHandler;
-import db.dao.UserDao;
-import db.entity.User;
 
 /**
  * This class implements a highly efficient way to handle many clients' requests at the same time.
@@ -38,22 +39,14 @@ public class ServerTheardPool {
 	static Map<String, Integer> clientIndex=new HashMap<>();
 	static Map<String, ObjectOutputStream> clientOut=new HashMap<>();
 	static Map<String, ObjectInputStream> clientIn=new HashMap<>();
+	static Integer adminState = 0;
+	static ObjectOutputStream adminOut = null;
 	/**
 	 * constructor
 	 * @throws IOException 
 	 */
 	public ServerTheardPool() throws IOException {
-		//load client information form
-		UserDao udao = new UserDao();
-		List<User> allUsers = udao.getAllUser();
-		
-		for (User user : allUsers) {
-			clientLog.put(user.getUsername(), user.getHashedPassword());
-			
-			System.err.println("Username: " + user.getUsername());
-			System.err.println("Password: " + user.getHashedPassword());
-		}
-		
+		clientLog.put("Admin", "123");
 		
 		serverSocket=new ServerSocket(PORT);
 		executorService=Executors.newFixedThreadPool(POOL_SIZE);
@@ -86,4 +79,16 @@ public class ServerTheardPool {
 		new ServerTheardPool().start();
 	}
 	
+	public static ObjectOutputStream getAdminOut() {
+		return adminOut;
+	}
+
+	
+	public static void setAdminState(Integer a) {
+		adminState = a;
+	}
+	
+	public static void setClientLog(Map<String, String> cl) {
+		clientLog = cl;
+	}
 }

@@ -170,11 +170,7 @@ public class UIAddDepartment {
 			}
 		});
 	}
-
-	public void keyReleased(KeyEvent e) {
-                //do nothing
-                }
-
+	
 	/**
 	 * Refresh display list
 	 * @param userNameList

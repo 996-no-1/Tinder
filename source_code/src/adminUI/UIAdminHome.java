@@ -22,6 +22,10 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.ListModel;
+import javax.swing.JCheckBox;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
 /**
  * 管理员的Home界面
  * @author 胡品爵
@@ -237,6 +241,10 @@ public class UIAdminHome {
 //					refreshBox(clientList);
 					btnAddAccount.setEnabled(false);
 					btnAddAccount.setVisible(false);
+					deleteAccountBtn.setEnabled(false);
+					deleteAccountBtn.setVisible(false);
+					blockAccountBtn.setEnabled(false);
+					blockAccountBtn.setVisible(false);
 					unlockAccountBtn.setEnabled(false);
 					unlockAccountBtn.setVisible(false);
 					resetPasswordBtn.setEnabled(false);
@@ -344,7 +352,8 @@ public class UIAdminHome {
 						Envelope envelope=new Envelope();
 						envelope.setSourceName("UIAdminHome");
 						String msg="Unlock_Account";
-
+						List<Object> emsg=new ArrayList<>();
+						emsg.add(msg);
 						for(String e:list.getSelectedValuesList()) {
 							emsg.add(processSelectedValue(e));
 						}
@@ -388,10 +397,6 @@ public class UIAdminHome {
 						String msg = "Begin Delete Department";
 						List<Object> emsg = new ArrayList<>();
 						emsg.add(msg);
-
-						List<Object> emsg=new ArrayList<>();
-						emsg.add(msg);
-
 						emsg.add(str);
 						envelope.setMsg(emsg);
 						adminApplication.setEnvelope(envelope);
@@ -463,14 +468,6 @@ public class UIAdminHome {
 		}
 	}
 	
-            @Override
-            public void keyTyped(KeyEvent e) {
-                String s = component.getText();
-                if(s.length() >= 7) {
-                    e.consume();
-                }
-            }
-
 	/**
 	 * Refresh display list
 	 * @param dataList	list you want to display

@@ -1,5 +1,5 @@
 package ServerImp;
-  
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +21,8 @@ import Client.Message;
 import Client.SystemMsgForCertificate;
 import Client.SystemMsgForNotify;
 import SecurityAlgorithm.CaesarAlgorithm;
+import SecurityAlgorithm.MD5;
+import ServerTheardPool.ServerTheardPool;
 import db.dao.GroupDao;
 import db.dao.UserDao;
 import db.entity.Group;
@@ -35,10 +37,10 @@ import db.util.DBFactory;
  * @version 1.0
  */
 public class ServerHandler implements Runnable {
-	private Map<String, String> clientLog = new HashMap<>();// 存储系统的合法用户
-	private Map<String, Socket> clientSockets = new HashMap<>();// this obj is  used to  maintain the  information  between  server and  clients.
-	private Map<String, Certificate> certificateList = new HashMap<>();// To  store  the  client 's RSA public Key
-	private Map<String, Integer> curClientIndex = new HashMap<>();
+	private Map<String, String> clientLog = new HashMap<>();				// Store the user name and hashed password of all clients
+	private Map<String, Socket> clientSockets = new HashMap<>();			// this object is  used to  maintain the  information  between  server and  clients.
+	private Map<String, Certificate> certificateList = new HashMap<>();		// To  store  the  client 's RSA public Key
+	private Map<String, Integer> curClientIndex = new HashMap<>();			//Store current online user
 	private Integer userIndex;
 	private Socket socket;
 	private  InputStream in = null;
@@ -47,9 +49,10 @@ public class ServerHandler implements Runnable {
 	private  ObjectInputStream ois = null;
 	private  ObjectOutputStream oos = null;
 	private  ObjectOutputStream alloos = null;
-	private String curClient = null;
+	private String curClient = null;										//The user that this thread connected
 	private String clientAsMode=null;
 	private UserDao udao = new UserDao();
+	private Integer isAdmin = 0;
 	 Map<String, ObjectOutputStream> clientOut=new HashMap<>();
 	 Map<String, ObjectInputStream> clientIn=new HashMap<>();
 /**
@@ -86,31 +89,49 @@ public class ServerHandler implements Runnable {
 			ois = new ObjectInputStream(in);
 			// receive log request from client
 			ClientInfo logReq = null;
+			
+			//Handle user login or administrator login
 			while (true) {
 				Thread.sleep(100);
 				logReq = (ClientInfo) ois.readObject();
 				
+				//Reload client user name and hashed password information into parameter
+				reloadClientLog();
+				
+				
+				//Handle administrator login
 				if(logReq.getUsername().equals("Admin")) {
+					
+					//If user name and password is correct
 					if(clientLog.get(logReq.getUsername()).equals(logReq.getMD5())) {
 						
+						
+						//Transfer system message to notify
 						SystemMsgForNotify failInfo = new SystemMsgForNotify();
 						String msg = "Welcome to the chat room!";
 						failInfo.setMsg(msg);
 						failInfo.setSender("Server");
 						oos.writeObject(failInfo);oos.flush();
 						
+						System.err.println("Password verified!");
 						
+						
+						//Transfer name list of all groups
 						List<String> groupNameList = new ArrayList<String>();
 						
 						GroupDao gdao = new GroupDao();
 						List<Group> groupList = gdao.getAllGroup();
 						for (Group group : groupList) {
 							groupNameList.add(group.getGroupname());
+							System.err.println("Group Test: " + group.getGroupname());
 						}
 						
 						oos.writeObject(groupNameList);oos.flush();
 						
+						System.err.println("Transfer group name list");
 						
+						
+						//Transfer name list of all users
 						List<String> userNameList = new ArrayList<String>();
 						
 						for(Iterator<String> ite = clientLog.keySet().iterator();ite.hasNext();) {
@@ -120,9 +141,27 @@ public class ServerHandler implements Runnable {
 						
 						oos.writeObject(userNameList);oos.flush();
 						
+						System.err.println("Transfer user name list");
+						
+						
+						//Transfer name list of all online list
+						List<String> onlineUserNameList = new ArrayList<String>();
+						for (String string : curClientIndex.keySet()) {
+							onlineUserNameList.add(string);
+						}
+						
+						oos.writeObject(onlineUserNameList);oos.flush();
+						
+						System.err.println("Transfer online user name list");
+						
+						ServerTheardPool.setAdminState(1);isAdmin = 1;
+						ServerTheardPool.setAdminOut(oos);
 						
 						break;
-					}else {
+					}
+					
+					//If password is wrong
+					else {
 						SystemMsgForNotify failInfo = new SystemMsgForNotify();
 						String msg = "please check your password!";
 						failInfo.setMsg(msg);
@@ -135,7 +174,10 @@ public class ServerHandler implements Runnable {
 					}
 				}
 				
+				//Handle user login
 				if (clientLog.containsKey(logReq.getUsrname())) {
+					
+					//If user name and password is correct and the account it login is not online
 					if (clientLog.get(logReq.getUsrname()).equals(logReq.getMD5())&&curClientIndex.get(logReq.getUsrname()) == null) {
 						// store client information
 						clientSockets.put(logReq.getUsrname(), socket);
@@ -161,6 +203,7 @@ public class ServerHandler implements Runnable {
 						break;
 					}
 				}
+				
 				// log fail.Send failed information to client
 				SystemMsgForNotify failInfo = new SystemMsgForNotify();
 				String msg = new CaesarAlgorithm("10").encryptMsg("Please check your account!");
@@ -169,6 +212,8 @@ public class ServerHandler implements Runnable {
 				oos.writeObject(failInfo);
 				oos.flush();
 			}
+			
+			//For client which is login success to negotiate certificate and get members information
 			if(!logReq.getUsername().equals("Admin")) {
 				//receive client's certificate
 				Certificate certificate = (Certificate) ois.readObject();
@@ -236,6 +281,17 @@ public class ServerHandler implements Runnable {
 					boradcastout.flush();
 					boradcastout=null;
 				}
+				
+				//Refresh administrator's GUI list if administrator is online
+				if(ServerTheardPool.getAdminState() == 1) {
+					
+					SystemMsgForNotify smfn = new SystemMsgForNotify();
+					smfn.setSender("System");
+					smfn.setReceiver("Admin");
+					smfn.setMsg("Client Login! " + curClient);
+					
+					ServerTheardPool.getAdminOut().writeObject(smfn);ServerTheardPool.getAdminOut().flush();
+				}
 			}
 			
 			/**
@@ -252,6 +308,7 @@ public class ServerHandler implements Runnable {
 						Object object = ois.readObject();
 						
 						
+						//If object from client is 'SystemMsgForNotify' type
 						if (object instanceof SystemMsgForNotify) {
 							
 							//handler client's request
@@ -260,20 +317,29 @@ public class ServerHandler implements Runnable {
 							//System.err.println("request"+systemMsgForNotify.getSender());
 							SystemMsgForCertificate systemMsgForCertificate=new SystemMsgForCertificate();
 							Socket to=clientSockets.get(systemMsgForNotify.getReceiver());
-							//systemMsgForCertificate.setHost(to.getInetAddress().getHostName());
-							//systemMsgForCertificate.setPort(curClientIndex.get(systemMsgForNotify.getReceiver()));
+//							systemMsgForCertificate.setHost(to.getInetAddress().getHostName());
+//							systemMsgForCertificate.setPort(curClientIndex.get(systemMsgForNotify.getReceiver()));
 							//System.err.println(systemMsgForNotify.getReceiver()+" 回应  "+systemMsgForCertificate.getPort());
 							systemMsgForCertificate.setCertificate(certificateList.get(systemMsgForNotify.getReceiver()));
 							
 							clientOut.get(systemMsgForNotify.getSender()).writeObject(systemMsgForCertificate);
 							clientOut.get(systemMsgForNotify.getSender()).flush();
-						}else if(object instanceof User) {
+						}
+						
+						//If object from client is 'User' type
+						else if(object instanceof User) {
 							UserDao udao=new UserDao();
 							udao.updateUser((User)object);
-						}else if(object instanceof Message) {
+						}
+						
+						//If object from client is 'Message' type
+						else if(object instanceof Message) {
 							Message revMsg = (Message) object;
 							
+							//Handle message from administrator
 							if(revMsg.getSender().equals("Admin") && revMsg.getReceiver().equals("Server")) {
+								
+								//Handle adding department part one
 								if(revMsg.getMsg().toString().equals("Begin Add Department")) {
 									
 									//Return all user name list
@@ -285,7 +351,22 @@ public class ServerHandler implements Runnable {
 									}
 									oos.writeObject(allUserNameList);oos.flush();
 									
-								}else if(revMsg.getMsg().toString().startsWith("GroupAdd")) {
+								}
+								
+								//Handle logout
+								else if(revMsg.getMsg().toString().equals("LOGOUTOUTOUT")) {
+									ServerTheardPool.setAdminState(0);
+									Message msg=new Message();
+									msg.setSender("Server");
+									msg.setReceiver("Admin");
+									msg.setMsg("Logout Success");
+									oos.writeObject(msg);oos.flush();
+									
+									System.err.println("State: " + ServerTheardPool.getAdminState());
+								}
+								
+								//Handle adding department part two
+								else if(revMsg.getMsg().toString().startsWith("GroupAdd")) {
 									String[] params = revMsg.getMsg().toString().split("\\.\\.");
 									if(params.length > 1) {
 										
@@ -298,16 +379,20 @@ public class ServerHandler implements Runnable {
 										
 										GroupDao gdao = new GroupDao();
 										Boolean suc = gdao.createGroup(groupName);
-										gdao.addUserToGroup(groupName, groupUserList);
 										
 										//Instructions of success or fail for adding new group
 										if(suc) {
+											
+											gdao.addUserToGroup(groupName, groupUserList);
+											
+											//Transfer success message
 											Message msg = new Message();
 											msg.setReceiver("Admin");
 											msg.setSender("Server");
 											msg.setMsg("New Group Add Success");
 											oos.writeObject(msg);oos.flush();
 											
+											//Transfer name list of all groups
 											List<Group> groupList = gdao.getAllGroup();
 											List<String> groupNameList = new ArrayList<String>();
 											
@@ -316,11 +401,35 @@ public class ServerHandler implements Runnable {
 											}
 											
 											oos.writeObject(groupNameList);oos.flush();
+											
+											//Transfer name list of all online users
+											List<String> onlineUserNameList = new ArrayList<String>();
+											for (String string : curClientIndex.keySet()) {
+												onlineUserNameList.add(string);
+											}
+											
+											oos.writeObject(onlineUserNameList);oos.flush();
+											
+											System.err.println("Transfer online user name list");
 										}else {
 											
+											//Transfer fail message
+											Message msg = new Message();
+											msg.setReceiver("Admin");
+											msg.setSender("Server");
+											msg.setMsg("Group Name existed already!");
+											oos.writeObject(msg);oos.flush();
 										}
+										
+										//Refresh group structure UI of all online users
+										sendOnlineClientListToAllOnlineUser();
+										sendGroupInfoListToAllOnlineUser();
+										sendClientInfoListToAllOnlineUser();
 									}
-								}else if(revMsg.getMsg().toString().startsWith("BeginModifyGroup")) {
+								}
+								
+								//Handle modifying group
+								else if(revMsg.getMsg().toString().startsWith("BeginModifyGroup")) {
 									
 									List<String> userNeedRefresh = new ArrayList<>();
 									
@@ -331,6 +440,7 @@ public class ServerHandler implements Runnable {
 									
 									List<String> extraGroupMemberNameList,insideGroupMemberNameList;
 									
+									//Transfer begin message
 									Message sm = new Message();
 									sm.setSender("Server");
 									sm.setReceiver("Admin");
@@ -338,18 +448,21 @@ public class ServerHandler implements Runnable {
 									
 									oos.writeObject(sm);oos.flush();
 									
+									//Refresh group structure UI of administrator's modify window
 									extraGroupMemberNameList = gdao.getAllUserNotIn(groupName);
 									insideGroupMemberNameList = gdao.getAllUserIn(groupName);
 									
 									oos.writeObject(extraGroupMemberNameList);oos.flush();
 									oos.writeObject(insideGroupMemberNameList);oos.flush();
 									
+									//Handle instructions in administrator's modify window
 									while(true) {
 										
 										System.err.println("Begin roop");
 										
 										Message req = (Message) ois.readObject();
 										
+										//Handle add user into group instruction
 										if(req.getMsg().toString().startsWith("AddUserToGroup")) {
 											String[] paramsList = req.getMsg().toString().split("\\.\\.");
 											List<String> addUserNameList = new ArrayList<>();
@@ -376,7 +489,10 @@ public class ServerHandler implements Runnable {
 											oos.writeObject(extraGroupMemberNameList);oos.flush();
 											oos.writeObject(insideGroupMemberNameList);oos.flush();
 											
-										}else if(req.getMsg().toString().startsWith("DiscardUserFromGroup")) {
+										}
+										
+										//Handle discard user from group instruction
+										else if(req.getMsg().toString().startsWith("DiscardUserFromGroup")) {
 											String[] paramsList = req.getMsg().toString().split("\\.\\.");
 											List<String> discardUserNameList = new ArrayList<>();
 											
@@ -403,36 +519,252 @@ public class ServerHandler implements Runnable {
 											
 											oos.writeObject(extraGroupMemberNameList);oos.flush();
 											oos.writeObject(insideGroupMemberNameList);oos.flush();
-										}else {
+										}
+										
+										//Handle return button
+										else {
 											
-											List<Group> groupList = gdao.getAllGroup();
-											List<List<String>> groupMemberList = new ArrayList<List<String>>();
+											//Refresh group structure of all online users
+											sendOnlineClientListToAllOnlineUser();
+											sendGroupInfoListToAllOnlineUser();
+											sendClientInfoListToAllOnlineUser();
 											
-											UserDao udao = new UserDao();
-											List<String> notInGroupMembers = udao.getNotInGroupUserList();
-											notInGroupMembers.add(0, "Default");
-											groupMemberList.add(notInGroupMembers);
-											
-											for (Group group : groupList) {
-												List<String> tmp = new ArrayList<String>();
-												tmp.add(group.getGroupname());
-												for (String tmpUsername : group.getMemberUsernameList()) {
-													tmp.add(tmpUsername);
-												}
-												groupMemberList.add(tmp);
-											}
-											
-											for (String string : userNeedRefresh) {
-												ObjectOutputStream TMPOOS = clientOut.get(string);
-												if(TMPOOS != null) {
-													TMPOOS.writeObject(groupMemberList);TMPOOS.flush();
-												}
-											}
 											break;
 										}
 									}
 								}
-							}else {
+								
+								//Handle blocking account
+								else if(revMsg.getMsg().toString().startsWith("Block_Account")) {
+									String[] splits=revMsg.getMsg().toString().trim().split("\\s");
+									UserDao ud=new UserDao();
+									if(splits.length>1) {
+										for(int i=1;i<splits.length;i++) {
+											ud.setBanUser(splits[i],"lock");
+										}
+									}
+									List<User> allUserList = udao.getAllUser();
+									Message msg=new Message();
+									msg.setSender("Server");
+									msg.setReceiver("Admin");
+									StringBuffer emsg = new StringBuffer();
+									emsg.append("BlockAccountComplete ");
+									for (User user : allUserList) {
+										emsg.append(user.getUsername());
+										emsg.append(" ");
+									}
+									msg.setMsg(emsg);
+									oos.writeObject(msg);oos.flush();
+									
+									List<String> onlineUserNameList = new ArrayList<String>();
+									for (String string : curClientIndex.keySet()) {
+										onlineUserNameList.add(string);
+									}
+									
+									oos.writeObject(onlineUserNameList);oos.flush();
+									
+									System.err.println("Transfer online user name list");
+								}
+								
+								//Handle unlock account
+								else if(revMsg.getMsg().toString().startsWith("Unlock_Account")) {
+									String[] splits=revMsg.getMsg().toString().trim().split("\\s");
+									if(splits.length>1) {
+										UserDao ud=new UserDao();
+										for(int i=1;i<splits.length;i++) {
+											ud.setBanUser(splits[i],"Unlock");
+										}
+									}
+									List<User> allUserList = udao.getAllUser();
+									Message msg=new Message();
+									msg.setSender("Server");
+									msg.setReceiver("Admin");
+									StringBuffer emsg = new StringBuffer();
+									emsg.append("UnlockAccountComplete ");
+									for (User user : allUserList) {
+										emsg.append(user.getUsername());
+										emsg.append(" ");
+									}
+									msg.setMsg(emsg);
+									oos.writeObject(msg);oos.flush();
+									
+									List<String> onlineUserNameList = new ArrayList<String>();
+									for (String string : curClientIndex.keySet()) {
+										onlineUserNameList.add(string);
+									}
+									
+									oos.writeObject(onlineUserNameList);oos.flush();
+									
+									System.err.println("Transfer online user name list");
+								}
+								
+								//Handle delete account
+								else if(revMsg.getMsg().toString().startsWith("Delete_Account")) {
+									String[] splits=revMsg.getMsg().toString().trim().split("\\s");
+									if(splits.length>1) {
+										UserDao ud=new UserDao();
+										for(int i=1;i<splits.length;i++) {
+											ud.deleteUser(splits[i]);
+										}
+									}
+									List<User> allUserList = udao.getAllUser();
+									Message msg=new Message();
+									msg.setSender("Server");
+									msg.setReceiver("Admin");
+									StringBuffer emsg = new StringBuffer();
+									emsg.append("DeleteAccountComplete ");
+									for (User user : allUserList) {
+										emsg.append(user.getUsername());
+										emsg.append(" ");
+									}
+									msg.setMsg(emsg);
+									oos.writeObject(msg);oos.flush();
+									
+									List<String> onlineUserNameList = new ArrayList<String>();
+									for (String string : curClientIndex.keySet()) {
+										onlineUserNameList.add(string);
+									}
+									
+									oos.writeObject(onlineUserNameList);oos.flush();
+									
+									System.err.println("Transfer online user name list");
+									
+									sendOnlineClientListToAllOnlineUser();
+									sendGroupInfoListToAllOnlineUser();
+									sendClientInfoListToAllOnlineUser();
+									
+									reloadClientLog();
+								}
+								
+								//Handle reset password
+								else if(revMsg.getMsg().toString().startsWith("ResetPasswd")) {
+									String[] splits=revMsg.getMsg().toString().trim().split("\\s");
+									if(splits.length==3) {
+										UserDao ud=new UserDao();
+										String username=splits[1];
+										String passwd=splits[2];
+										User user=ud.getUser(username);
+										user.setHashedPassword(new MD5(passwd).processMD5());
+										ud.updateUser(user);
+									}
+									else {
+										Exception not2=new Exception("submit msg goes wrong");
+										not2.printStackTrace();
+									}
+									List<User> allUserList = udao.getAllUser();
+									StringBuffer msgSend=new StringBuffer();
+									Message msg=new Message();
+									msg.setSender("Server");
+									msg.setReceiver("Admin");
+									msgSend.append("ResetPasswdSuccessfully");
+									msgSend.append(" ");
+									for (User user : allUserList) {
+										msgSend.append(user.getUsername());
+										msgSend.append(" ");
+									}
+									msg.setMsg(msgSend);
+									oos.writeObject(msg);oos.flush();
+									
+									List<String> onlineUserNameList = new ArrayList<String>();
+									for (String string : curClientIndex.keySet()) {
+										onlineUserNameList.add(string);
+									}
+									
+									oos.writeObject(onlineUserNameList);oos.flush();
+									
+									System.err.println("Transfer online user name list");
+									
+									reloadClientLog();
+								}
+								
+								//Handle add account
+								else if(revMsg.getMsg().toString().startsWith("ADDACCOUNT")){
+									String[] str = revMsg.getMsg().toString().split("\\:");
+									String[] params = str[1].split("\\|");
+									
+									String username = params[0];
+									String age = params[1];
+									String gender = params[2];
+									String password = params[3];
+									
+									System.err.println("Age: " + age);
+									
+									UserDao ud = new UserDao();
+									User newUser = new User();
+									newUser.setUsername(username);
+									newUser.setAge(Integer.parseInt(age));
+									newUser.setGender(gender);
+									Boolean suc = ud.addUser(newUser, password);
+									
+									if(suc) {
+										Message msg = new Message();
+										msg.setReceiver("Admin");
+										msg.setSender("Server");
+										msg.setMsg("Add User Account Success");
+										oos.writeObject(msg);
+										oos.flush();
+									}else {
+										Message msg = new Message();
+										msg.setReceiver("Admin");
+										msg.setSender("Server");
+										msg.setMsg("User Name has been used!");
+										oos.writeObject(msg);
+										oos.flush();
+										continue;
+									}
+									
+									UserDao udao = new UserDao();
+									List<User> allUser = udao.getAllUser();
+									List<String> allUserName = new ArrayList<>();
+									
+									for (User user : allUser) {
+										allUserName.add(user.getUsername());
+									}
+									oos.writeObject(allUserName);oos.flush();
+									
+									sendOnlineClientListToAllOnlineUser();
+									sendGroupInfoListToAllOnlineUser();
+									sendClientInfoListToAllOnlineUser();
+									
+									reloadClientLog();
+								} 
+								
+								//Handle delete department
+								else if(revMsg.getMsg().toString().startsWith("Begin Delete Department")){
+									String[] str = revMsg.getMsg().toString().split(":");
+									String departmentNames = str[1];
+									GroupDao gd = new GroupDao();
+									Boolean suc = gd.deleteGroup(departmentNames);
+
+									if(suc) {
+										Message msg = new Message();
+										msg.setReceiver("Admin");
+										msg.setSender("Server");
+										msg.setMsg("Delete Department Success");
+										oos.writeObject(msg);
+										oos.flush();
+									}else {
+										
+									}
+									
+									GroupDao gdao = new GroupDao();
+									List<Group> groupList = gdao.getAllGroup();
+									List<String> groupNameList = new ArrayList<String>();
+									
+									for (Group group : groupList) {
+										groupNameList.add(group.getGroupname());
+									}
+									
+									oos.writeObject(groupNameList);oos.flush();
+									
+									sendOnlineClientListToAllOnlineUser();
+									sendGroupInfoListToAllOnlineUser();
+									sendClientInfoListToAllOnlineUser();
+								}
+							}
+							
+							//Handle message from client
+							else {
 								String[] pl = revMsg.getReceiver().split("\\[");
 								if(pl.length < 2) {
 									
@@ -451,7 +783,10 @@ public class ServerHandler implements Runnable {
 									
 								}
 							}
-						}else if(object instanceof FileSend) {
+						}
+						
+						//If object from client is 'FileSend' type
+						else if(object instanceof FileSend) {
 							FileSend sfs = (FileSend) object;
 							if(sfs.getTo().split("\\[").length > 1 && sfs.getTo().split("\\[")[1].equals("group]")) {
 								GroupChatFunc gcf = new GroupChatFunc(clientOut);
@@ -460,7 +795,10 @@ public class ServerHandler implements Runnable {
 								String receive = sfs.getTo();
 								clientOut.get(receive).writeObject(sfs);clientOut.get(receive).flush();
 							}
-						}else if(object instanceof ClientInfo) {
+						}
+						
+						//If object from client is 'ClientInfo' type
+						else if(object instanceof ClientInfo) {
 							ClientInfo tmp = (ClientInfo) object;
 							UserDao udao = new UserDao();
 							User tmpU = new User();
@@ -471,23 +809,7 @@ public class ServerHandler implements Runnable {
 							tmpU.setHashedPassword(tmp.getMD5());
 							udao.updateUser(tmpU);
 							
-							List<ClientInfo> clientInfoList = new ArrayList<>();
-							List<User> ul = udao.getAllUser();
-							
-							for (User user : ul) {
-								ClientInfo tt = new ClientInfo();
-								tt.setUsername(user.getUsername());
-								tt.setNote(user.getNote());
-								tt.setGender(user.getGender());
-								tt.setAge(user.getAge());
-								clientInfoList.add(tt);
-							}
-							
-							for(Iterator<String> ite = clientOut.keySet().iterator();ite.hasNext();) {
-
-								String nn = ite.next();
-								ObjectOutputStream TMPOOS = clientOut.get(nn);
-								TMPOOS.writeObject(clientInfoList);TMPOOS.flush();							}
+							sendClientInfoListToAllOnlineUser();
 						}
 						
 					} catch (EOFException e) {
@@ -523,10 +845,35 @@ public class ServerHandler implements Runnable {
 		}
 	}
 
+	
+	/**
+	 * Handle logout
+	 */
 	public void offlineNotify() {
+		
+		if(isAdmin == 1) {
+			
+			ServerTheardPool.setAdminState(0);
+			return;
+		}
+		
+		if(ServerTheardPool.getAdminState() == 1) {
+			
+			System.err.println("One client off and admin get msg");
+			
+			SystemMsgForNotify smfn = new SystemMsgForNotify();
+			smfn.setSender("System");
+			smfn.setReceiver("Admin");
+			smfn.setMsg("Client Logout! " + curClient);
+			
+			ServerTheardPool.getAdminOut().writeObject(smfn);
+			ServerTheardPool.getAdminOut().flush();
+		}
+		
 		System.err.println(curClient + " exit");
 		curClientIndex.remove(curClient);
 		clientSockets.remove(curClient);
+		certificateList.remove(curClient);
 		clientOut.remove(curClient);
 		clientIn.remove(curClient);
 		SystemMsgForNotify broadcast = new SystemMsgForNotify();
@@ -534,7 +881,6 @@ public class ServerHandler implements Runnable {
 		broadcast.setSender("server");
 		broadcast.setType(1);
 		broadcast.setMsg(new CaesarAlgorithm("10").encryptMsg("Client " + curClient + " is offline."));
-		try {
 			List<String> list=new ArrayList<>();
 			for (String string : curClientIndex.keySet()) {
 				list.add(string);
@@ -546,9 +892,95 @@ public class ServerHandler implements Runnable {
 				boradcastout.flush();
 				boradcastout=null;
 			}
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
+		
 
 	}
+	
+	/**
+	 * Send client information list of all users to all online users
+	 * @throws IOException
+	 */
+	private void sendClientInfoListToAllOnlineUser() throws IOException {
+		List<ClientInfo> clientInfoList = new ArrayList<>();
+		List<User> ul = udao.getAllUser();
+		
+		for (User user : ul) {
+			ClientInfo tt = new ClientInfo();
+			tt.setUsername(user.getUsername());
+			tt.setNote(user.getNote());
+			tt.setGender(user.getGender());
+			tt.setAge(user.getAge());
+			clientInfoList.add(tt);
+		}
+		
+		for(Iterator<String> ite = clientOut.keySet().iterator();ite.hasNext();) {
+			ObjectOutputStream TMPOOS = clientOut.get(ite.next());
+			TMPOOS.writeObject(clientInfoList);TMPOOS.flush();
+		}
+	}
+	
+	/**
+	 * Send all group structure to all online users
+	 * @throws IOException
+	 */
+	private void sendGroupInfoListToAllOnlineUser() throws IOException {
+		for (ObjectOutputStream tmpoos : clientOut.values()) {
+			GroupDao gdao = new GroupDao();
+			List<Group> groupList = gdao.getAllGroup();
+			List<List<String>> groupMemberList = new ArrayList<List<String>>();
+			
+			UserDao udao = new UserDao();
+			List<String> notInGroupMembers = udao.getNotInGroupUserList();
+			notInGroupMembers.add(0, "Default");
+			groupMemberList.add(notInGroupMembers);
+			
+			for (Group group : groupList) {
+				List<String> tmp = new ArrayList<String>();
+				tmp.add(group.getGroupname());
+				for (String tmpUsername : group.getMemberUsernameList()) {
+					tmp.add(tmpUsername);
+				}
+				groupMemberList.add(tmp);
+			}
+			tmpoos.writeObject(groupMemberList);tmpoos.flush();
+		}
+	}
+	
+	
+
+	
+	/**
+	 * Reload client login information
+	 */
+	private void reloadClientLog() {
+		
+		Map<String,String> newCl = new HashMap<String, String>();
+		
+		UserDao udao = new UserDao();
+		List<User> allUsers = udao.getAllUser();
+		
+		for (User user : allUsers) {
+			newCl.put(user.getUsername(), user.getHashedPassword());
+		}
+		
+		newCl.put("Admin", "123");
+		ServerTheardPool.setClientLog(newCl);
+		clientLog = newCl;
+	}
+	/**
+	 * Send all online user list to all online users
+	 * @throws IOException
+	 */
+	private void sendOnlineClientListToAllOnlineUser() throws IOException {
+		
+		List<String> list=new ArrayList<>();
+		for (String string : curClientIndex.keySet()) {
+			list.add(string);
+		}
+		
+		for (ObjectOutputStream tmpoos : clientOut.values()) {
+			tmpoos.writeObject(list);tmpoos.flush();
+		}
+	}
+
 }
