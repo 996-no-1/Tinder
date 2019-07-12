@@ -1,30 +1,37 @@
 .
-├── dev_doc // 开发过程中不需要提交的文档
-│   ├── Management // doc里可能用上的资源
-│   ├── Process // doc里可能用上的资源
-│   └── temp // 大家用来训练git命令和刷commit次数的rbq
-├── doc // 所要提交的所有文档内容
-│   ├── Management // 管理类文档
-│   │   ├── 会议纪要 // 项目组和小组的会议内容
-│   │   └── 开发进度日报 // 每天的进度日报
-│   └── Process // 技术类文档
+├── README.md
+├── dev_doc // 项目开发过程中所使用到的文件
+├── doc
+│   ├── GB_T 8567-2006 计算机软件文档编制规范.pdf
+│   ├── Management
+│   │   ├── 会议纪要 // 共计13次会议纪要
+│   │   ├── 开发进度日报 // 共计11次开发进度日报
+│   │   └── 文档评审报告 // 对所有的技术开发文档进行评审
+│   │       ├── 1-项目计划研究阶段-文档评审报告
+│   │       ├── 2-需求分析阶段-文档评审报告
+│   │       ├── 3-软件迭代阶段-文档评审报告
+│   │       │   ├── 1-软件第一次迭代(v0.1)
+│   │       │   ├── 2-软件第二次迭代(v0.2)
+│   │       │   └── 3-软件第三次迭代(v0.3)
+│   │       └── 4-项目总结与验收阶段-文档评审报告
+│   └── Process
 │       ├── 1-项目计划研究阶段
-│       │   ├── 项目计划甘特图.xlsx
 │       │   ├── NPUSS-Tinder-DNR-1.0(E) 文档编号规则.docx
 │       │   ├── NPUSS-Tinder-PPR-0.1 项目进度报告.docx
 │       │   ├── NPUSS-Tinder-SCMP-1.0(E) 软件配置管理计划.docx
 │       │   ├── NPUSS-Tinder-SDP-1.0(E) 软件开发计划.docx
 │       │   ├── NPUSS-Tinder-SDS-1.0(E) 软件文档规范.docx
-│       │   └── NPUSS-Tinder-STD-1.0(E) 软件测试说明.docx
+│       │   ├── NPUSS-Tinder-STD-1.0(E) 软件测试说明.docx
+│       │   └── 项目计划甘特图.xlsx
 │       ├── 2-需求分析阶段
 │       │   ├── NPUSS-Tinder-PPR-0.2 项目进度报告.docx
 │       │   └── NPUSS-Tinder-SRS-1.0(E) 软件需求规格说明书.docx
-│       ├── 3-软件迭代阶段
+│       ├── 3-软件迭代阶段 // 共分为三次迭代过程
 │       │   ├── 1-软件第一次迭代(v0.1)
 │       │   │   ├── 1-设计阶段
 │       │   │   │   ├── NPUSS-Tinder-DBDD-0.1 数据库(顶层)设计说明.docx
 │       │   │   │   ├── NPUSS-Tinder-SDD-0.1 软件(结构)设计说明.docx
-│       │   │   │   ├── NPUSS-Tinder-SFT-0.1 软件功能列表.docx
+│       │   │   │   └── NPUSS-Tinder-SFT-0.1 软件功能列表.docx
 │       │   │   ├── 2-测试阶段
 │       │   │   │   └── NPUSS-Tinder-STR-0.1 软件测试报告.docx
 │       │   │   ├── NPUSS-Tinder-PPR-0.3 项目进度报告.docx
@@ -34,7 +41,7 @@
 │       │   │   ├── 1-设计阶段
 │       │   │   │   ├── NPUSS-Tinder-DBDD-0.2 数据库(顶层)设计说明.docx
 │       │   │   │   ├── NPUSS-Tinder-SDD-0.2 软件(结构)设计说明.docx
-│       │   │   │   ├── NPUSS-Tinder-SFT-0.2 软件功能列表.docx
+│       │   │   │   └── NPUSS-Tinder-SFT-0.2 软件功能列表.docx
 │       │   │   ├── 2-测试阶段
 │       │   │   │   └── NPUSS-Tinder-STR-0.2 软件测试报告.docx
 │       │   │   ├── NPUSS-Tinder-PPR-0.4 项目进度报告.docx
@@ -44,7 +51,7 @@
 │       │   │   ├── 1-设计阶段
 │       │   │   │   ├── NPUSS-Tinder-DBDD-0.3 数据库(顶层)设计说明.docx
 │       │   │   │   ├── NPUSS-Tinder-SDD-0.3 软件(结构)设计说明.docx
-│       │   │   │   ├── NPUSS-Tinder-SFT-0.3 软件功能列表.docx
+│       │   │   │   └── NPUSS-Tinder-SFT-0.3 软件功能列表.docx
 │       │   │   ├── 2-测试阶段
 │       │   │   │   └── NPUSS-Tinder-STR-0.3 软件测试报告.docx
 │       │   │   ├── NPUSS-Tinder-PPR-0.5 项目进度报告.docx
@@ -54,6 +61,8 @@
 │       └── 4-项目总结与验收阶段
 │           ├── NPUSS-Tinder-PDSR-1.0(E) 项目开发总结报告.docx
 │           ├── NPUSS-Tinder-PPR-1.0(E) 项目进度报告.docx
+│           ├── NPUSS-Tinder-STR-1.0 软件测试报告.docx
 │           └── NPUSS-Tinder-SUM-1.0(E) 软件用户手册.docx
-├── src // 项目源代码
-└── README.md
+└── source_code // 存放项目源码
+
+58 directories, 255 files

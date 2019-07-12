@@ -21,6 +21,4 @@ doc内文件间引用情况请参考[Tinder技术文档引用情况](dev_doc/Man
 
 项目后期的注意事项请参考[后期修改内容](dev_doc/Management/注意事项.txt)
 
-当前任务的[完成情况](dev_doc/Management/完成情况.txt)
-
-今日分工：[07.10](dev_doc/Management/分工情况/分工情况--20190711.txt)
+今日分工：[07.11](dev_doc/Management/分工情况/分工情况--20190711.txt)。重点是统一代码的commit注释，格式为[code] create/update/delete/ XX function --代码人员
